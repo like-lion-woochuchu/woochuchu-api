@@ -13,7 +13,7 @@ class BeMyBaby(models.Model):
         return self.title
 
 class BeMyBabyComment(models.Model):
-    feed = models.ForeignKey(BeMyBaby, on_delete=models.CASCADE)
+    bemybaby = models.ForeignKey('BeMyBaby', on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
