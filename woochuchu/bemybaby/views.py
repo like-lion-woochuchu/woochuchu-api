@@ -66,10 +66,12 @@ class BeMyBabyFeedDetailView(APIView):
 
 class BeMyBabyCommentAPIView(APIView):
     def get_comments(self, bemybaby_id):
+        #get_objects / get_object 로 통일
         try:
             return BeMyBabyComment.objects.filter(bemybaby_id = bemybaby_id)
         except BeMyBabyComment.DoesNotExist:
             return Response(status=status.HTTP_204_NO_CONTENT)
+        #comment가 없는 경우랑 
 
     def get(self, request, bemybaby_id):
         comment = self.get_comments(bemybaby_id)
@@ -88,6 +90,7 @@ class BeMyBabyCommentAPIView(APIView):
 
 class BeMyBabyCommentDetailAPIView(APIView):
     def get_comment(self, id):
+        #이거 comment_id 이런식으로 명시하기
         try:
             return BeMyBabyComment.objects.get(id = id)
         except BeMyBabyComment.DoesNotExist:
@@ -99,6 +102,7 @@ class BeMyBabyCommentDetailAPIView(APIView):
             return comment
         serializer = BeMyBabyCommentSerializer(comment)
         return Response(serializer.data)
+        #여기도 status 추가 해주기
 
     def put(self, request, id):
         comment = self.get_comment(id)
@@ -109,7 +113,7 @@ class BeMyBabyCommentDetailAPIView(APIView):
             serializer.save()
             return Response(serializer.data) 
         return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
-
+#404로 put하고 delete 
     def delete(self, request, id):
         comment = self.get_comment(id)
         if isinstance(comment ,Response) :
