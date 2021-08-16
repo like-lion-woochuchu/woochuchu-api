@@ -10,7 +10,10 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from decouple import config
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'woochuchu.settings')
+SETTINGS = config('SETTINGS')
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS)
 
 application = get_wsgi_application()

@@ -1,16 +1,17 @@
 from django.db.models import query
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework import viewsets, mixins, generics, status
+from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
+
+# 성공 시 200? 201?
 
 class FindMyBabyViewSet(viewsets.ModelViewSet):
     queryset = FindMyBaby.objects.all()
     serializer_class = FindMyBabySerializer
 
-# 댓글 분리
 
 class FindMyBabyDeletePutAPIView(APIView):
     def get_object(self, feed_id):
@@ -22,7 +23,7 @@ class FindMyBabyDeletePutAPIView(APIView):
             serializer = FindMyBabySerializer(feed, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response(status.HTTP_201_CREATED)
 
             else:
                 raise ValueError("No matched feed")
@@ -42,6 +43,7 @@ class FindMyBabyDeletePutAPIView(APIView):
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class FindMyBabyCommentAPIView(APIView):
     def get_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id)
@@ -49,7 +51,7 @@ class FindMyBabyCommentAPIView(APIView):
     def get(self, request, feed_id):
         comments = self.get_objects
         serializer = FindMyBabyCommentSerializer(comments)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, feed_id):
         serializer = FindMyBabyCommentSerializer(data=request.data)
@@ -79,7 +81,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
             serializer = FindMyBabyCommentSerializer(comment, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response(status=status.HTTP_201_CREATED)
             
             else:
                 raise serializer.errors
