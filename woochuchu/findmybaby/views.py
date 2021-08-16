@@ -43,7 +43,6 @@ class FindMyBabyDeletePutAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class FindMyBabyCommentAPIView(APIView):
     def get_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id)
