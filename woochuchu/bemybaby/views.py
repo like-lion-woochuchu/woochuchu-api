@@ -11,22 +11,24 @@ from rest_framework import status
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BeMyBabyFeedView(APIView):
     def get_objects(self):
-        return get_list_or_404(BeMyBaby)
+        return BeMyBaby.objects.all()
 
     def get(self, request):
         try :
             bemybaby = self.get_objects()
-            serializer = BeMyBabyFeedSerializer(bemybaby, many = True)
-            return Response(serializer.data, status = status.HTTP_200_OK)
+            serializer = BeMyBabyFeedSerializer(bemybaby, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(status = status.HTTP_404_NOT_FOUND) 
+            print(e)
+            #다 추가하기 
+            return Response(status =status.HTTP_200_OK) 
 
     def post(self, request):
         serializer = BeMyBabyFeedSerializer(data = request.data)
         try:
             if serializer.is_valid():
                 serializer.save()
-                return Response(status = status.HTTP_201_CREATED ) 
+                return Response(status = status.HTTP_200_OK ) 
         except Exception as e:
             return Response(status = status.HTTP_400_BAD_REQUEST)
 
@@ -66,7 +68,7 @@ class BeMyBabyFeedDetailView(APIView):
 
 class BeMyBabyCommentAPIView(APIView):
     def get_objects(self, feed_id):
-        return get_list_or_404(BeMyBabyComment, bemybaby_id = feed_id)
+        return BeMyBabyComment.objects.filter(bemybaby_id = feed_id)
 
     def get(self, request, feed_id):
         try:
@@ -75,7 +77,7 @@ class BeMyBabyCommentAPIView(APIView):
             serializer = BeMyBabyCommentSerializer(comments, many = True)
             return Response(serializer.data, status = status.HTTP_200_OK)
         except Exception as e:
-            return Response(status = status.HTTP_200_OK)
+            return Response(status = status.HTTP_404_NOT_FOUND)
     
     def post(self, request, feed_id):
         serializer = BeMyBabyCommentSerializer(data = request.data)

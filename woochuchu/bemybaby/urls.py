@@ -7,6 +7,6 @@ app_name = 'bemybaby'
 urlpatterns = [
     path('', BeMyBabyFeedView.as_view()),
     path('<int:feed_id>/', BeMyBabyFeedDetailView.as_view()),
-    path('<int:feed_id>/comment/', BeMyBabyCommentAPIView.as_view()),
+    path('<int:feed_id>/comments/', BeMyBabyCommentAPIView.as_view()),
     path('comment/<int:comment_id>/', BeMyBabyCommentDetailAPIView.as_view()),
 ]
