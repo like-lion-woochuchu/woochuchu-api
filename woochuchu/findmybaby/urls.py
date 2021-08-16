@@ -8,5 +8,6 @@ router.register('', FindMyBabyViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('<int:feed_id>/', FindMyBabyDeletePutAPIView.as_view()),
+    path('<int:feed_id>/comments/', FindMyBabyCommentAPIView.as_view()),
     path('comment/<int:comment_id>/', FindMyBabyCommentDeletePutAPIView.as_view())
 ]
