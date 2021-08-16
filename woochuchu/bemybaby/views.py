@@ -10,113 +10,108 @@ from rest_framework import status
 # Create your views here.
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BeMyBabyFeedView(APIView):
-    def get_object(self):
-        try:
-            return BeMyBaby.objects.all()
-        except BeMyBaby.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_objects(self):
+        return get_list_or_404(BeMyBaby)
 
     def get(self, request):
-        bemybaby = self.get_object()
-        print(bemybaby)
-        if isinstance(bemybaby, Response) :
-            return bemybaby
-        serializer = BeMyBabyFeedSerializer(bemybaby, many=True)
-        return Response(serializer.data) 
+        try :
+            bemybaby = self.get_objects()
+            serializer = BeMyBabyFeedSerializer(bemybaby, many=True)
+            return Response(serializer.data, status= status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND) 
 
     def post(self, request):
         serializer = BeMyBabyFeedSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED ) 
-        return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status = status.HTTP_201_CREATED ) 
+        except Exception as e:
+            return Response(status= status.HTTP_400_BAD_REQUEST)
 
 
 class BeMyBabyFeedDetailView(APIView):
-    def get_object(self, id):
-        try:
-            return BeMyBaby.objects.get(id = id)
-        except BeMyBaby.DoesNotExist:
+    def get_object(self, feed_id):
+        return get_object_or_404(BeMyBaby, id = feed_id)
+
+    def get(self, request, feed_id):
+        try :
+            bemybaby = self.get_object(feed_id)
+            serializer = BeMyBabyFeedSerializer(bemybaby)
+            return Response(serializer.data, status= status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND) 
+
+    def put(self, request, feed_id):
+        try :
+            bemybaby = self.get_object(feed_id)
+            serializer = BeMyBabyFeedSerializer(bemybaby, data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status= status.HTTP_200_OK) 
+            else:
+                raise ValueError()
+        except Exception as e:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, id):
-        bemybaby = self.get_object(id)
-        if isinstance(bemybaby, Response) :
-            return bemybaby
-        serializer = BeMyBabyFeedSerializer(bemybaby)
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        bemybaby = self.get_object(id)
-        if isinstance(bemybaby, Response) :
-            return bemybaby
-        serializer = BeMyBabyFeedSerializer(bemybaby, data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data) 
-        return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, id):
-        bemybaby = self.get_object(id)
-        if isinstance(bemybaby, Response) :
-            return bemybaby
-        bemybaby.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)
+    def delete(self, request, feed_id):
+        try:
+            bemybaby = self.get_object(feed_id)
+            bemybaby.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class BeMyBabyCommentAPIView(APIView):
-    def get_comments(self, bemybaby_id):
-        #get_objects / get_object 로 통일
-        try:
-            return BeMyBabyComment.objects.filter(bemybaby_id = bemybaby_id)
-        except BeMyBabyComment.DoesNotExist:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        #comment가 없는 경우랑 
+    def get_objects(self, feed_id):
+        return get_list_or_404(BeMyBabyComment, bemybaby_id = feed_id)
 
-    def get(self, request, bemybaby_id):
-        comment = self.get_comments(bemybaby_id)
-        print(comment)
-        if isinstance(comment, Response):
-            return comment
-        serializer = BeMyBabyCommentSerializer(comment, many=True)
-        return Response(serializer.data)
+    def get(self, request, feed_id):
+        try:
+            comments = self.get_objects(feed_id)
+            print(comments)
+            serializer = BeMyBabyCommentSerializer(comments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_200_OK)
     
-    def post(self, request, bemybaby_id):
+    def post(self, request, feed_id):
         serializer = BeMyBabyCommentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED ) 
-        return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+            return Response(status = status.HTTP_200_OK ) 
+        return Response(status= status.HTTP_400_BAD_REQUEST)
 
 class BeMyBabyCommentDetailAPIView(APIView):
-    def get_comment(self, id):
-        #이거 comment_id 이런식으로 명시하기
+    def get_object(self, comment_id):
+        return get_object_or_404(BeMyBabyComment, id = comment_id)
+
+    def get(self, request, comment_id):
         try:
-            return BeMyBabyComment.objects.get(id = id)
-        except BeMyBabyComment.DoesNotExist:
-            return Response(status=status.HTTP_204_NO_CONTENT )
+            comment = self.get_object(comment_id)
+            serializer = BeMyBabyCommentSerializer(comment)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, id):
-        comment = self.get_comment(id)
-        if isinstance(comment ,Response) :
-            return comment
-        serializer = BeMyBabyCommentSerializer(comment)
-        return Response(serializer.data)
-        #여기도 status 추가 해주기
+    def put(self, request, comment_id):
+        try:
+            comment = self.get_object(comment_id)
+            serializer = BeMyBabyCommentSerializer(comment, data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data) 
+            else:
+                raise ValueError()
+        except Exception as e:
+            return Response(status= status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, id):
-        comment = self.get_comment(id)
-        if isinstance(comment, Response) :
-            return comment
-        serializer = BeMyBabyCommentSerializer(comment, data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data) 
-        return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
-#404로 put하고 delete 
-    def delete(self, request, id):
-        comment = self.get_comment(id)
-        if isinstance(comment ,Response) :
-            return comment
-        comment.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)
+    def delete(self, request, comment_id):
+        try:
+            comment = self.get_object(comment_id)
+            comment.delete()
+            return Response(status = status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND)
