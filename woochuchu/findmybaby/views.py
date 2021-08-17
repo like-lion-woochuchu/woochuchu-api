@@ -159,24 +159,24 @@ class FindMyBabyDeletePutAPIView(APIView):
 
 class FindMyBabyCommentAPIView(APIView):
     def get_objects(self, feed_id):
-        return FindMyBabyComment.objects.filter(findmybaby_id=feed_id)
+        return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
     def get(self, request, feed_id):
         try:
             comments = self.get_objects(feed_id=feed_id)
             serializer = FindMyBabyCommentSerializer(comments, many=True)
+            print(serializer.data)
             
             data = {
                 "results": {
-                    "data": {
-                        serializer.data
-                    }
+                    "data": serializer.data
                 }
             }
 
             return Response(data=data, status=status.HTTP_200_OK)
         
         except Exception as e:
+            # unexpected error
             print(e)
             data = {
                 "results": {
@@ -189,8 +189,11 @@ class FindMyBabyCommentAPIView(APIView):
 
     def post(self, request, feed_id):
         try:
+            request.data['findmybaby'] = feed_id
             serializer = FindMyBabyCommentSerializer(data=request.data)
+            
             if serializer.is_valid():
+                serializer.findmybaby_id = feed_id
                 serializer.save()
 
                 data = {
@@ -262,11 +265,13 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
 
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def put(self, request, commnet_id):
+    def put(self, request, comment_id):
         try:
-            comment = self.get_object(comment_id=commnet_id)
+            comment = self.get_object(comment_id=comment_id)
+            request.data['findmybaby'] = comment.findmybaby_id
             serializer = FindMyBabyCommentSerializer(
                 comment, data=request.data)
+                
             if serializer.is_valid():
                 serializer.save()
                 data = {
