@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from .models import BeMyBaby, BeMyBabyComment
 
-class BeMyBabyFeedSerializer(serializers.ModelSerializer):
+class BeMyBabySerializer(serializers.ModelSerializer):
     class Meta:
         model = BeMyBaby
         fields = '__all__'

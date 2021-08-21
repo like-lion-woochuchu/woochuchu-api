@@ -67,7 +67,7 @@ class FindMyBabyAPIView(APIView):
                 }
             }
 
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class FindMyBabyDeletePutAPIView(APIView):
@@ -135,7 +135,6 @@ class FindMyBabyDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
         except FindMyBaby.DoesNotExist:
-            print("dfasdf")
             data = {
                 "results": {
                     "msg": "일치하는 데이터가 존재하지 않습니다.",
@@ -147,7 +146,7 @@ class FindMyBabyDeletePutAPIView(APIView):
 
         except Exception as e:
             # unexpected error
-            print("e: ", e)
+            print(e)
             data = {
                 "results": {
                     "msg": "정상적인 접근이 아닙니다.",
