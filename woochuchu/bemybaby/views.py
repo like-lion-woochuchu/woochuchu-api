@@ -61,7 +61,6 @@ class BeMyBabyAPIView(APIView):
             }
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class BeMyBabyDeletePutView(APIView):
     def get_object(self, feed_id):
         return BeMyBaby.objects.get(id=feed_id)
@@ -93,7 +92,6 @@ class BeMyBabyDeletePutView(APIView):
                     "code": "E4040"
                 }
             }
-
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
@@ -132,7 +130,6 @@ class BeMyBabyDeletePutView(APIView):
                 }
             }
             return Response(status=status.HTTP_404_NOT_FOUND)
-
 
 class BeMyBabyCommentAPIView(APIView):
     def get_objects(self, feed_id):
