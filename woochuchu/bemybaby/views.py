@@ -1,5 +1,4 @@
 from datetime import date
-import re
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
@@ -122,7 +121,7 @@ class BeMyBabyDeletePutView(APIView):
             }
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print("e: ", e)
+            print(e)
             data = {
                 "results": {
                     "msg": "정상적인 접근이 아닙니다.",
