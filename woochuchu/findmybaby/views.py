@@ -271,7 +271,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
             request.data['findmybaby'] = comment.findmybaby_id
             serializer = FindMyBabyCommentSerializer(
                 comment, data=request.data)
-                
+
             if serializer.is_valid():
                 serializer.save()
                 data = {

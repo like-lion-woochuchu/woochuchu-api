@@ -1,22 +1,23 @@
 from django.db import models
-
+from accounts.models import User, Animal, Address
 # Create your models here.
+
 class FindMyBaby(models.Model):
-    # USER 추가
-    # LOCATION 추가
-    # ANIMAL 추가
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.DO_NOTHING)
+    animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=20)
     body = models.TextField()
     img_url = models.URLField()
+    phone = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    phone = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return self.title
 
 class FindMyBabyComment(models.Model):
-    # USER 추가
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
     findmybaby = models.ForeignKey("FindMyBaby", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
