@@ -4,15 +4,23 @@ class User(models.Model):
     email = models.EmailField()
     username = models.CharField(max_length=20)
     uuid = models.CharField(max_length=32)
+    provider = models.CharField(max_length=10)
     phone = models.CharField(max_length=20)
     animals = models.ManyToManyField('Animal')
     address = models.ForeignKey('Address', on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        managed = False
+        db_table = 'user'
 
 class Animal(models.Model):
     name = models.CharField(max_length=15)
+
+    class Meta:
+        managed = False
+        db_table = 'animal'
 
 
 class Address(models.Model):
@@ -22,6 +30,10 @@ class Address(models.Model):
     address_coord = models.PointField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        managed = False
+        db_table = 'address'
 
 
 class AddressRegion(models.Model):
@@ -39,6 +51,10 @@ class AddressRegion(models.Model):
     sub_address_no = models.CharField(max_length=10)
     address_coord = models.PointField()
 
+    class Meta:
+        managed = False
+        db_table = 'address_region'
+
 
 class AddressRoad(models.Model):
     address = models.OneToOneField(
@@ -54,3 +70,7 @@ class AddressRoad(models.Model):
     building_name = models.CharField(max_length=30)
     zone_no = models.CharField(max_length=5)
     address_coord = models.PointField()
+
+    class Meta:
+        managed = False
+        db_table = 'address_road'

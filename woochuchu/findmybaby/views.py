@@ -8,6 +8,13 @@ from .models import *
 
 
 class FindMyBabyAPIView(APIView):
+
+    """
+    
+    찾아주세요 API
+
+    """
+
     def get_objects(self):
         return FindMyBaby.objects.all().order_by('-id')
 

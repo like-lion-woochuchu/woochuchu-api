@@ -13,8 +13,10 @@ class FindMyBaby(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
+    class Meta:
+        managed = False
+        db_table = 'findmybaby'
+
 
 class FindMyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,6 +24,7 @@ class FindMyBabyComment(models.Model):
     findmybaby = models.ForeignKey("FindMyBaby", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.body
+    
+    class Meta:
+        managed = False
+        db_table = 'findmybaby_comment'
