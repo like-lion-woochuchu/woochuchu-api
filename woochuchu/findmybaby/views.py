@@ -8,6 +8,13 @@ from .models import *
 
 
 class FindMyBabyAPIView(APIView):
+
+    """
+    
+    찾아주세요 API
+
+    """
+
     def get_objects(self):
         return FindMyBaby.objects.all().order_by('-id')
 
@@ -270,7 +277,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
             request.data['findmybaby'] = comment.findmybaby_id
             serializer = FindMyBabyCommentSerializer(
                 comment, data=request.data)
-                
+
             if serializer.is_valid():
                 serializer.save()
                 data = {
