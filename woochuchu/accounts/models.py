@@ -5,7 +5,6 @@ class User(models.Model):
     username = models.CharField(max_length=20)
     uuid = models.CharField(max_length=32)
     provider = models.CharField(max_length=10)
-    phone = models.CharField(max_length=20)
     animals = models.ManyToManyField('Animal')
     address = models.ForeignKey('Address', on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
