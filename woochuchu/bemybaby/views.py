@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BeMyBabyAPIView(APIView):
@@ -146,7 +148,7 @@ class BeMyBabyCommentAPIView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            data={
+            data = {
                 "results": {
                     "msg": "정상적인 접근이 아닙니다.",
                     "code": "E5000"
@@ -156,7 +158,7 @@ class BeMyBabyCommentAPIView(APIView):
     
     def post(self, request, feed_id):
         try:
-            request.data['findmybaby'] = feed_id
+            request.data['bemybaby'] = feed_id
             serializer = BeMyBabyCommentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
