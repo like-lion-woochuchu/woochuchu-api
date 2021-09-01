@@ -28,7 +28,7 @@ class AuthViewSet(viewsets.GenericViewSet):
             user = User.objects.get(
                 email=email,
                 provider=provider
-                )
+            )
 
             payload_value = str(user.uuid) + ":" + str(user.id)
             payload = {
@@ -44,9 +44,9 @@ class AuthViewSet(viewsets.GenericViewSet):
             }
 
             return Response(data=data, status=status.HTTP_200_OK)
-        
+
         except User.DoesNotExist:
-            
+
             data = {
                 "results": {
                     "msg": "유저 정보가 올바르지 않습니다.",
@@ -55,9 +55,9 @@ class AuthViewSet(viewsets.GenericViewSet):
             }
 
             return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
-        
+
         except Exception as e:
-            print(e)
+            print(e.message)
 
             data = {
                 "results": {
@@ -68,7 +68,6 @@ class AuthViewSet(viewsets.GenericViewSet):
 
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
     @action(methods=['POST'], detail=False)
     def signup(self, request):
         try:
@@ -78,41 +77,49 @@ class AuthViewSet(viewsets.GenericViewSet):
                 user_data['uuid'] = user_uuid
 
                 address_name = request.data['address']['address_name']
-                address_name_detail = request.data['address']['address_name_detail'] if request.data['address']['address_name_detail'] else ""
+                address_name_detail = request.data['address'][
+                    'address_name_detail'] if request.data['address']['address_name_detail'] else ""
 
                 try:
                     address_res = get_address(address_name)
                     if address_res['address_type'] == "ROAD_ADDR":
-                        address_obj = AddressRoad.objects.get(address_name=address_res['address_name'])
-                    
+                        address_obj = AddressRoad.objects.get(
+                            address_name=address_res['address_name'])
+
                     elif address_res['address_type'] == "REGION_ADDR":
-                        address_obj = AddressRegion.objects.get(address_name=address_res['address_name'])
-                    
+                        address_obj = AddressRegion.objects.get(
+                            address_name=address_res['address_name'])
+
                     user_data['address'] = address_obj.address_id
-                
+
                 except AddressRoad.DoesNotExist or AddressRegion.DoesNotExist:
-                    address_coord = Point(float(address_res["y"]), float(address_res["x"]))
+
+                    address_coord = Point(
+                        float(address_res["y"]), float(address_res["x"]))
+
                     address_data = {
                         'address_name': address_res['address_name'],
                         'address_name_detail': address_name_detail,
                         'address_type': address_res['address_type'],
                         'address_coord': address_coord
-                    }  
+                    }
 
                     address_serializer = AddressSerializer(data=address_data)
-                    
+
                     if address_serializer.is_valid():
                         address_serializer.save()
-                    
+
                     else:
+
                         data = {
                             "results": {
-                                "msg": "주소 값이 올바르지 않습니다.",
+                                "msg": address_serializer.errors,
                                 "code": "E4001"
                             }
                         }
+
                         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-                    
+
                     address_region_data = {
                         'address': address_serializer.data['id'],
                         'address_name': address_res['address']['address_name'],
@@ -142,45 +149,46 @@ class AuthViewSet(viewsets.GenericViewSet):
                         'zone_no': address_res['road_address']['zone_no'],
                         'address_coord': address_coord
                     }
-                    
-                    address_region_serializer = AddressRegionSerializer(data=address_region_data)
-                    address_road_serializer = AddressRoadSerializer(data=address_road_data)
 
+                    address_region_serializer = AddressRegionSerializer(
+                        data=address_region_data)
+                    address_road_serializer = AddressRoadSerializer(
+                        data=address_road_data)
+                    
                     if address_region_serializer.is_valid() and address_road_serializer.is_valid():
                         address_region_serializer.save()
                         address_road_serializer.save()
-                        user_data['address'] = address_serializer.data['id']
-
+                    
                     else:
                         data = {
                             "results": {
                                 "msg": "주소 값이 올바르지 않습니다.",
-                                "code": "E4002"
+                                "code": "E4001"
                             }
                         }
 
                         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-                    
 
                 except Exception as e:
                     print(e)
-                
+
                 # request.data['animals'] : Array of animal ids
-                animals_data = request.data['animals']
-                user_data['animals'] = animals_data
-                user_serializer = UserSerializer(data=user_data)
                 
+                user_data['animals'] = request.data['animals']
+                user_data['address'] = address_serializer.data['id']
+                user_serializer = UserSerializer(data=user_data)
+
                 if user_serializer.is_valid():
                     user_serializer.save()
 
                     user_id = user_serializer.data['id']
                     user_uuid = user_serializer.data['uuid']
                     payload_value = str(user_uuid) + ":" + str(user_id)
-                    
+
                     payload = {
                         "subject": payload_value
                     }
-                    
+
                     access_token = generate_token(payload, "access")
 
                     data = {
@@ -188,7 +196,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                             "access_token": access_token
                         }
                     }
-                    
+
                     return Response(data=data, status=status.HTTP_200_OK)
 
                 else:
@@ -210,7 +218,6 @@ class AuthViewSet(viewsets.GenericViewSet):
             }
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
     @action(methods=['POST'], detail=False)
     def token(self, request):
         user_id = request.data['id']
@@ -231,7 +238,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
-        
+
         except User.DoesNotExist:
             data = {
                 "results": {
@@ -239,5 +246,5 @@ class AuthViewSet(viewsets.GenericViewSet):
                     "code": "E4000"
                 }
             }
-            
+
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
