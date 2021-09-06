@@ -5,9 +5,11 @@ from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-
+from accounts.permissions import *
 class FindMyBabyAPIView(APIView):
+    permission_classes = [
+        JwtPermission
+    ]
 
     def get_objects(self):
         return FindMyBaby.objects.all().order_by('-id')
@@ -43,7 +45,9 @@ class FindMyBabyAPIView(APIView):
         새 피드를 작성합니다.
         """
         try:
+            request.data['user'] = request.user.id
             serializer = FindMyBabySerializer(data=request.data)
+            # 주소 고민을 해야됨
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -77,7 +81,6 @@ class FindMyBabyAPIView(APIView):
 
 
 class FindMyBabyDeletePutAPIView(APIView):
-
     def get_object(self, feed_id):
         return FindMyBaby.objects.get(id=feed_id)
 
