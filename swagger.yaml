@@ -1,0 +1,227 @@
+swagger: '2.0'
+info:
+  title: Woochuchu API
+  description: "\uC6B0\uCB48\uCB48 API \uBA85\uC138\uC11C"
+  termsOfService: https://www.google.com/policies/terms/
+  contact:
+    email: meanaccto@naver.com
+  license:
+    name: BSD License
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /bemybaby/:
+    get:
+      operationId: bemybaby_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    post:
+      operationId: bemybaby_create
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    parameters: []
+  /bemybaby/comment/{comment_id}/:
+    get:
+      operationId: bemybaby_comment_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    put:
+      operationId: bemybaby_comment_update
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    delete:
+      operationId: bemybaby_comment_delete
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    parameters:
+      - name: comment_id
+        in: path
+        required: true
+        type: string
+  /bemybaby/{feed_id}/:
+    get:
+      operationId: bemybaby_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    put:
+      operationId: bemybaby_update
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    delete:
+      operationId: bemybaby_delete
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    parameters:
+      - name: feed_id
+        in: path
+        required: true
+        type: string
+  /bemybaby/{feed_id}/comments/:
+    get:
+      operationId: bemybaby_comments_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    post:
+      operationId: bemybaby_comments_create
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bemybaby
+    parameters:
+      - name: feed_id
+        in: path
+        required: true
+        type: string
+  /findmybaby/:
+    get:
+      operationId: findmybaby_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    post:
+      operationId: findmybaby_create
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    parameters: []
+  /findmybaby/comment/{comment_id}/:
+    put:
+      operationId: findmybaby_comment_update
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    delete:
+      operationId: findmybaby_comment_delete
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    parameters:
+      - name: comment_id
+        in: path
+        required: true
+        type: string
+  /findmybaby/{feed_id}/:
+    put:
+      operationId: findmybaby_update
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    delete:
+      operationId: findmybaby_delete
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    parameters:
+      - name: feed_id
+        in: path
+        required: true
+        type: string
+  /findmybaby/{feed_id}/comments/:
+    get:
+      operationId: findmybaby_comments_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    post:
+      operationId: findmybaby_comments_create
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - findmybaby
+    parameters:
+      - name: feed_id
+        in: path
+        required: true
+        type: string
+definitions: {}

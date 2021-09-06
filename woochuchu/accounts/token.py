@@ -4,8 +4,8 @@ from decouple import config
 
 def generate_token(payload, type):
     if type == "access":
-        # 30분
-        exp = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        # 2주
+        exp = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
     elif type == "refresh":
         # 2주
         exp = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
