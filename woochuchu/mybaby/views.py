@@ -164,7 +164,7 @@ class MyBabyCommentAPIView(APIView):
                 serializer.save()
                 data = {
                     "results": {
-                        "msg": "데이터를 성공적으로 저장하였습니다."
+                        "msg": "데이터가 성공적으로 저장되었습니다."
                     }
                 }
                 return Response(data=data, status=status.HTTP_200_OK ) 
@@ -254,11 +254,11 @@ class MyBabyCommentDeletePutAPIView(APIView):
 class LikeAPIView(APIView):
     def post(self, request, feed_id):
         try:
-            #user = request.user
-            if MyBabyLike.objects.filter(user.id=user_id, mybaby_id=feed_id).exists():
-                MyBabyLike.objects.filter(user.id=user_id, mybaby_id=feed_id).delete()
+            if MyBabyLike.objects.filter(user_id=1, mybaby_id = feed_id).exists():
+                MyBabyLike.objects.filter(user_id=1, mybaby_id=feed_id).delete()
+                like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             else:
-                MyBabyLike.objects.create(user.id=user_id, mybaby_id=feed_id)
+                MyBabyLike.objects.create(user_id=1, mybaby_id=feed_id)
                 like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             data = {
@@ -277,7 +277,7 @@ class LikeAPIView(APIView):
             }
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(request, feed_id):
+    def get(self, request, feed_id):
         try:
             likes = MyBabyLike.objects.filter(mybaby_id=feed_id)
             likes_count = likes.count()
