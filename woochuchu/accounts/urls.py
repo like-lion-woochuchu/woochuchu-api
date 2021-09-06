@@ -1,7 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
+from rest_framework.routers import DefaultRouter, SimpleRouter
+
+routers = DefaultRouter()
+routers.register('auth', AuthViewSet, basename='auth')
 
 urlpatterns = [
-    path('address/', address),
-    path('get/', get_address_code),
+    path('', include(routers.urls)),
 ]
