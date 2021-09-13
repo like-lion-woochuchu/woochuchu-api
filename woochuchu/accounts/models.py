@@ -3,7 +3,10 @@ from django.contrib.gis.db import models
 class User(models.Model):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=20, unique=True)
+<<<<<<< HEAD
     profile_img = models.URLField()
+=======
+>>>>>>> 83eb7b0ec320199d0d03d5bd78c34c0e8ea68496
     uuid = models.CharField(max_length=32)
     provider = models.CharField(max_length=10)
     animals = models.ManyToManyField('Animal')
