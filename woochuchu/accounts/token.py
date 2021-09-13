@@ -13,7 +13,7 @@ def generate_token(payload, type):
         return Exception("Invalid tokenType")
     
     payload['exp'] = exp
-    payload['iat'] = datetime.datetime.utcnow()  #issued at
+    payload['iat'] = datetime.datetime.utcnow()
     encoded = jwt.encode(payload, config("SECRET_KEY"), algorithm=config("JWT_ALGORITHM"))
 
     return encoded

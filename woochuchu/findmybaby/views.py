@@ -8,13 +8,15 @@ from drf_yasg import openapi
 from accounts.permissions import *
 class FindMyBabyAPIView(APIView):
     permission_classes = [
-        JwtPermission
+        JwtPermission.IsAuthenticatedOrReadOnly
     ]
 
     def get_objects(self):
         return FindMyBaby.objects.all().order_by('-id')
 
+#댓글, 좋아요 개수 다 불러오기 -> 일단 페이지네이션 생각 안하고
     def get(self, request):
+    #완성 시킨 후 필터로 유저가 좋아하는 동물만 불러오도록 추가
         """
         피드를 조회합니다.
         """
@@ -37,7 +39,6 @@ class FindMyBabyAPIView(APIView):
                     "code": "E5000"
                 }
             }
-
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -57,7 +58,7 @@ class FindMyBabyAPIView(APIView):
                 }
 
                 return Response(data=data, status=status.HTTP_200_OK)
-            
+
             else:
                 data = {
                     "results": {
@@ -81,9 +82,11 @@ class FindMyBabyAPIView(APIView):
 
 
 class FindMyBabyDeletePutAPIView(APIView):
+    permission_classes = [
+        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+    ]
     def get_object(self, feed_id):
         return FindMyBaby.objects.get(id=feed_id)
-
 
     def put(self, request, feed_id):
         """
@@ -91,27 +94,37 @@ class FindMyBabyDeletePutAPIView(APIView):
         """
         try:
             feed = self.get_object(feed_id=feed_id)
-            serializer = FindMyBabySerializer(feed, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
+            if request.user.id != feed.user.id:
                 data = {
                     "results": {
-                        "msg": "데이터가 성공적으로 저장되었습니다."
+                        "msg": "권한이 없습니다." 
                     }
                 }
 
-                return Response(data=data, status=status.HTTP_200_OK)
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
             else:
-                data = {
-                    "results": {
-                        "msg": serializer.errors,
-                        "code": "E4000"
+                request.data['user'] = request.user.id
+                serializer = FindMyBabySerializer(feed, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    data = {
+                        "results": {
+                            "msg": "데이터가 성공적으로 저장되었습니다."
+                        }
                     }
-                }
 
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-                
+                    return Response(data=data, status=status.HTTP_200_OK)
+
+                else:
+                    data = {
+                        "results": {
+                            "msg": serializer.errors,
+                            "code": "E4000"
+                        }
+                    }
+
+                    return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         except FindMyBaby.DoesNotExist:
             data = {
@@ -141,14 +154,24 @@ class FindMyBabyDeletePutAPIView(APIView):
         """
         try:
             feed = self.get_object(feed_id=feed_id)
-            feed.delete()
-            data = {
-                "results": {
-                    "msg": "데이터가 성공적으로 삭제되었습니다."
+            if request.user.id != feed.user.id:
+                data = {
+                    "results": {
+                        "msg": "권한이 없습니다." 
+                    }
                 }
-            }
 
-            return Response(data=data, status=status.HTTP_200_OK)
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+
+            else:
+                feed.delete()
+                data = {
+                    "results": {
+                        "msg": "데이터가 성공적으로 삭제되었습니다."
+                    }
+                }
+
+                return Response(data=data, status=status.HTTP_200_OK)
 
         except FindMyBaby.DoesNotExist:
             data = {
@@ -173,6 +196,9 @@ class FindMyBabyDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 class FindMyBabyCommentAPIView(APIView):
+    permission_classes = [
+        JwtPermission.IsAuthenticatedOrReadOnly
+    ]
 
     def get_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
@@ -184,7 +210,6 @@ class FindMyBabyCommentAPIView(APIView):
         try:
             comments = self.get_objects(feed_id=feed_id)
             serializer = FindMyBabyCommentSerializer(comments, many=True)
-            print(serializer.data)
             
             data = {
                 "results": {
@@ -212,6 +237,7 @@ class FindMyBabyCommentAPIView(APIView):
         """
         try:
             request.data['findmybaby'] = feed_id
+            request.data['user'] = request.user.id
             serializer = FindMyBabyCommentSerializer(data=request.data)
             
             if serializer.is_valid():
@@ -251,23 +277,50 @@ class FindMyBabyCommentAPIView(APIView):
 
 
 class FindMyBabyCommentDeletePutAPIView(APIView):
-   
+    permission_classes = [
+        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+    ]
+
     def get_object(self, comment_id):
         return FindMyBabyComment.objects.get(id=comment_id)
 
-    def delete(self, request, comment_id):
+    def put(self, request, comment_id):
         """
-        댓글을 삭제합니다.
+        댓글을 수정합니다.
         """
         try:
             comment = self.get_object(comment_id=comment_id)
-            comment.delete()
-            data = {
-                "results": {
-                    "msg": "데이터가 성공적으로 삭제되었습니다."
+            request.data['findmybaby'] = comment.findmybaby_id
+            if request.user.id != comment.user.id:
+                data = {
+                    "results": {
+                        "msg": "권한이 없습니다." 
+                    }
                 }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
+
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                request.data['user'] = request.user.id
+                serializer = FindMyBabyCommentSerializer(
+                    comment, data=request.data)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    data = {
+                        "results": {
+                            "msg": "데이터가 성공적으로 저장되었습니다."
+                        }
+                    }
+                    return Response(data=data, status=status.HTTP_200_OK)
+
+                else:
+                    data = {
+                        "results": {
+                            "msg": serializer.errors,
+                            "code": "E4000"
+                        }
+                    }
+                    return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         except FindMyBabyComment.DoesNotExist:
             data = {
@@ -291,33 +344,30 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
 
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def put(self, request, comment_id):
+    def delete(self, request, comment_id):
         """
-        댓글을 수정합니다.
+        댓글을 삭제합니다.
         """
         try:
             comment = self.get_object(comment_id=comment_id)
-            request.data['findmybaby'] = comment.findmybaby_id
-            serializer = FindMyBabyCommentSerializer(
-                comment, data=request.data)
-
-            if serializer.is_valid():
-                serializer.save()
+            if request.user.id != comment.user.id:
                 data = {
                     "results": {
-                        "msg": "데이터가 성공적으로 저장되었습니다."
+                        "msg": "권한이 없습니다." 
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK)
+
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
             else:
+                comment.delete()
                 data = {
                     "results": {
-                        "msg": serializer.errors,
-                        "code": "E4000"
+                        "msg": "데이터가 성공적으로 삭제되었습니다."
                     }
                 }
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+                return Response(data=data, status=status.HTTP_200_OK)
 
         except FindMyBabyComment.DoesNotExist:
             data = {

@@ -33,7 +33,6 @@ class AuthViewSet(viewsets.GenericViewSet):
             payload_value = str(user.uuid) + ":" + str(user.id)
             username = user.username
             profile_img = user.profile_img
-            #profile_img = user.profile_img
             #payload 에 username, userimgurl 포함
             payload = {
                 "subject": payload_value,
