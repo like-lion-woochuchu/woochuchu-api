@@ -27,3 +27,11 @@ class BeMyBabyComment(models.Model):
     class Meta:
         managed = False
         db_table = 'bemybaby_comment'
+
+class BeMyBabyLike(models.Model):
+    bemybaby = models.ForeignKey('BeMyBaby', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        managed = False
+        db_table = 'bemybaby_like'
