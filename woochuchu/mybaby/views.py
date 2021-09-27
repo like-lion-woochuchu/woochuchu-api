@@ -38,7 +38,7 @@ class MyBabyAPIView(APIView):
                     "comments": comment_serializer.data
                 }
                 #피드 좋아요 처리
-                likes = MyBabyLike.objects.filter(bemybaby_id=feed.id)
+                likes = MyBabyLike.objects.filter(mybaby_id=feed.id)
                 likes_count = likes.count()
                 data = feed_serializer.data
                 likes = {
@@ -330,13 +330,13 @@ class MyBabyLikeAPIView(APIView):
     ]
 
     def get_objects(self, user, feed_id):
-        return MyBabyLike.objects.get(bemybaby_id=feed_id, user_id=user.id)
+        return MyBabyLike.objects.get(mybaby_id=feed_id, user_id=user.id)
 
     def post(self, request, feed_id):
         try:
             like = self.get_objects(request.user, feed_id)
             like.delete()
-            like_count = MyBabyLike.objects.filter(bemybaby_id=feed_id).count()
+            like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             data = {
                 "results": {
                     "data": like_count 
@@ -345,8 +345,8 @@ class MyBabyLikeAPIView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
         except MyBabyLike.DoesNotExist:
-            MyBabyLike.objects.create(user=request.user, bemybaby_id=feed_id)
-            like_count = MyBabyLike.objects.filter(bemybaby_id=feed_id).count()
+            MyBabyLike.objects.create(user=request.user, mybaby_id=feed_id)
+            like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             data = {
                 "results": {
                     "data": like_count 
