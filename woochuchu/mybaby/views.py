@@ -33,8 +33,10 @@ class MyBabyAPIView(APIView):
                 feed_serializer = MyBabySerializer(feed)
                 #피드 댓글 처리
                 comments = self.get_comment_objects(feed.id)
+                comments_count = len(comments)
                 comment_serializer = MyBabyCommentSerializer(comments, many=True)
                 comment = {
+                    "comments_count": comments_count,
                     "comments": comment_serializer.data
                 }
                 #피드 좋아요 처리
