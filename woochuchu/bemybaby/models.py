@@ -7,7 +7,7 @@ class BeMyBaby(models.Model):
     address = models.ForeignKey(Address, on_delete=models.DO_NOTHING)
     animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
     breed = models.CharField(max_length=45)
-    sex = models.BooleanField()
+    sex = models.IntegerField()
     age = models.IntegerField(null=True)
     description = models.CharField(max_length=200)
     img_url = models.URLField()
