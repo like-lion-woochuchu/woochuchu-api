@@ -14,7 +14,7 @@ class BeMyBaby(models.Model):
     phone = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField()
+    status = models.IntegerField()
     
     class Meta:
         managed = False
@@ -30,11 +30,3 @@ class BeMyBabyComment(models.Model):
     class Meta:
         managed = False
         db_table = 'bemybaby_comment'
-
-class BeMyBabyLike(models.Model):
-    bemybaby = models.ForeignKey('BeMyBaby', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        managed = False
-        db_table = 'bemybaby_like'
