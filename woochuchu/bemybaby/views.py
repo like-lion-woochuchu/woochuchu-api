@@ -32,8 +32,10 @@ class BeMyBabyAPIView(APIView):
                 feed_serializer = BeMyBabySerializer(feed)
                 #피드 댓글 처리
                 comments = self.get_comment_objects(feed.id)
+                comments_count = len(comments)
                 comment_serializer = BeMyBabyCommentSerializer(comments, many=True)
                 comment = {
+                    "comments_count": comments_count,
                     "comments": comment_serializer.data
                 }
                 #피드 좋아요 처리
@@ -199,7 +201,7 @@ class BeMyBabyDeletePutView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class BeMyBabyCommentAPIView(APIView):
     permission_classes = [
@@ -208,31 +210,7 @@ class BeMyBabyCommentAPIView(APIView):
 
     def get_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
-    '''
-    def get(self, request, feed_id):
-        """
-        특정 피드의 댓글들을 조회합니다.
-        """
-        try:
-            comments = self.get_objects(feed_id=feed_id)
-            serializer = BeMyBabyCommentSerializer(comments, many=True)
-            data = {
-                "results": {
-                    "data": serializer.data
-                }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
 
-        except Exception as e:
-            print(e)
-            data = {
-                "results": {
-                    "msg": "정상적인 접근이 아닙니다.",
-                    "code": "E5000"
-                }
-            }
-            return Response(data=data, status=status.HTTP_500_BAD_REQUEST)
-    '''
     def post(self, request, feed_id):
         """
         특정 피드에 댓글을 작성합니다.
