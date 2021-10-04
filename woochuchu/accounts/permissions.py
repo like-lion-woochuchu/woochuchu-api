@@ -23,7 +23,7 @@ def get_jwt(request):
         
         return token
     except Exception as e:
-        print(e)
+        # print(e)
         return Exception("Invalid authorization")
 
 class JwtPermission:
