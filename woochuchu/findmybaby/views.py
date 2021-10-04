@@ -11,8 +11,11 @@ class FindMyBabyAPIView(APIView):
         JwtPermission.IsAuthenticatedOrReadOnly
     ]
 
-    def get_objects(self):
+    def get_feed_objects(self):
         return FindMyBaby.objects.all().order_by('-id')
+    
+    def get_comment_objects(self, feed_id):
+        return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
 #댓글, 좋아요 개수 다 불러오기 -> 일단 페이지네이션 생각 안하고
     def get(self, request):
@@ -21,7 +24,7 @@ class FindMyBabyAPIView(APIView):
         피드를 조회합니다.
         """
         try:
-            feeds = self.get_objects()
+            feeds = self.get_feed_objects()
             serializer = FindMyBabySerializer(feeds, many=True)
             data = {
                 "results": {

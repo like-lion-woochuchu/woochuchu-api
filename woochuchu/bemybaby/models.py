@@ -6,7 +6,6 @@ class BeMyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.DO_NOTHING)
     animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
-    title = models.CharField(max_length=100)
     body = models.TextField()
     img_url = models.URLField()
     phone = models.CharField(max_length=20, null=True)
