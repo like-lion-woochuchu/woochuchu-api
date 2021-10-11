@@ -352,45 +352,4 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class BeMyBabyLikeAPIView(APIView):
-    permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
-    ]
-
-    def get_objects(self, user, feed_id):
-        return BeMyBabyLike.objects.get(bemybaby_id=feed_id, user_id=user.id)
-
-    def post(self, request, feed_id):
-        try: 
-            like = self.get_objects(request.user, feed_id)
-            like.delete()
-            like_count = BeMyBabyLike.objects.filter(bemybaby_id=feed_id).count()
-            data = {
-                "results": {
-                    "data": like_count 
-                }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
-
-        except BeMyBabyLike.DoesNotExist:
-            BeMyBabyLike.objects.create(user=request.user, bemybaby_id=feed_id)
-            like_count = BeMyBabyLike.objects.filter(bemybaby_id=feed_id).count()
-            data = {
-                "results": {
-                    "data": like_count 
-                }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(e)
-            data = {
-                "results": {
-                    "msg": "정상적인 접근이 아닙니다.",
-                    "code": "E5000"
-                }
-            }
-            
-            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)s
