@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
-from drf_yasg import openapi
 from accounts.permissions import *
 class FindMyBabyAPIView(APIView):
     permission_classes = [
@@ -12,7 +11,7 @@ class FindMyBabyAPIView(APIView):
     ]
 
     def get_feed_objects(self):
-        return FindMyBaby.objects.all().order_by('-id')
+        return FindMyBaby.objects.all().prefetch_related("comments").order_by('-id')
     
     def get_comment_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
@@ -25,6 +24,7 @@ class FindMyBabyAPIView(APIView):
         """
         try:
             feeds = self.get_feed_objects()
+            # comments = self.get_comment_objects()
             serializer = FindMyBabySerializer(feeds, many=True)
             data = {
                 "results": {

@@ -27,7 +27,7 @@ class FindMyBaby(models.Model):
 class FindMyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
-    findmybaby = models.ForeignKey("FindMyBaby", on_delete=models.CASCADE)
+    findmybaby = models.ForeignKey("FindMyBaby", related_name="comments", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

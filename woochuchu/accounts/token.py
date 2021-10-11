@@ -10,7 +10,7 @@ def generate_token(payload, type):
         # 2주
         exp = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
     else:
-        return Exception("Invalid tokenType")
+        raise Exception("Invalid tokenType")
     
     payload['exp'] = exp
     payload['iat'] = datetime.datetime.utcnow()
@@ -22,8 +22,9 @@ def decode_token(token):
     try:
         decoded = jwt.decode(token, config("SECRET_KEY"), algorithms=config("JWT_ALGORITHM"))
         return decoded
+    
     except jwt.ExpiredSignatureError:
-        return Exception("TokenExpiredError: jwt expired")
+        raise Exception("TokenExpiredError: jwt expired")
     
     except jwt.InvalidTokenError:
-        return Exception("InvalidTokenError: invalid jwt")
+        raise Exception("InvalidTokenError: invalid jwt")
