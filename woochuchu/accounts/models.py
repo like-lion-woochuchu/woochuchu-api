@@ -3,6 +3,7 @@ from django.contrib.gis.db import models
 class User(models.Model):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=20, unique=True)
+    user_name = models.CharField(max_length=20, unique=True)
     profile_img = models.URLField()
     uuid = models.CharField(max_length=32)
     provider = models.CharField(max_length=10)

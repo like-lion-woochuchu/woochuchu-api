@@ -37,7 +37,7 @@ class AuthViewSet(viewsets.GenericViewSet):
             payload = {
                 "subject": payload_value,
                 "username": username,
-                "profile_img": profile_img 
+                "profile_img": profile_img
             }
             # refresh token 잠시 보류
             access_token = generate_token(payload, "access")

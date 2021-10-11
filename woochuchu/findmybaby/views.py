@@ -7,7 +7,7 @@ from .models import *
 from accounts.permissions import *
 class FindMyBabyAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_feed_objects(self):
@@ -86,7 +86,7 @@ class FindMyBabyAPIView(APIView):
 
 class FindMyBabyDeletePutAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
     def get_object(self, feed_id):
         return FindMyBaby.objects.get(id=feed_id)
@@ -97,7 +97,7 @@ class FindMyBabyDeletePutAPIView(APIView):
         """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user.id != feed.user.id:
+            if request.user_id != feed.user.id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -107,7 +107,7 @@ class FindMyBabyDeletePutAPIView(APIView):
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
             else:
-                request.data['user'] = request.user.id
+                request.data['user'] = request.user_id
                 serializer = FindMyBabySerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -157,7 +157,7 @@ class FindMyBabyDeletePutAPIView(APIView):
         """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user.id != feed.user.id:
+            if request.user_id != feed.user.id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -200,7 +200,7 @@ class FindMyBabyDeletePutAPIView(APIView):
 
 class FindMyBabyCommentAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, feed_id):
@@ -240,7 +240,7 @@ class FindMyBabyCommentAPIView(APIView):
         """
         try:
             request.data['findmybaby'] = feed_id
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
             serializer = FindMyBabyCommentSerializer(data=request.data)
             
             if serializer.is_valid():
@@ -281,7 +281,7 @@ class FindMyBabyCommentAPIView(APIView):
 
 class FindMyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, comment_id):
@@ -294,7 +294,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['findmybaby'] = comment.findmybaby_id
-            if request.user.id != comment.user.id:
+            if request.user_id != comment.user.id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -303,7 +303,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
 
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
             else:
-                request.data['user'] = request.user.id
+                request.data['user'] = request.user_id
                 serializer = FindMyBabyCommentSerializer(
                     comment, data=request.data)
 
@@ -353,7 +353,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
         """
         try:
             comment = self.get_object(comment_id=comment_id)
-            if request.user.id != comment.user.id:
+            if request.user_id != comment.user.id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
