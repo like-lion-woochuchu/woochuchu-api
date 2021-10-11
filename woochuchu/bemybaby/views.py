@@ -352,4 +352,4 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)s
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
