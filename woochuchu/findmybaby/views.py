@@ -4,15 +4,17 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
-from drf_yasg import openapi
 from accounts.permissions import *
 class FindMyBabyAPIView(APIView):
     permission_classes = [
         JwtPermission.IsAuthenticatedOrReadOnly
     ]
 
-    def get_objects(self):
-        return FindMyBaby.objects.all().order_by('-id')
+    def get_feed_objects(self):
+        return FindMyBaby.objects.all().prefetch_related("comments").order_by('-id')
+    
+    def get_comment_objects(self, feed_id):
+        return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
 #댓글, 좋아요 개수 다 불러오기 -> 일단 페이지네이션 생각 안하고
     def get(self, request):
@@ -21,7 +23,8 @@ class FindMyBabyAPIView(APIView):
         피드를 조회합니다.
         """
         try:
-            feeds = self.get_objects()
+            feeds = self.get_feed_objects()
+            # comments = self.get_comment_objects()
             serializer = FindMyBabySerializer(feeds, many=True)
             data = {
                 "results": {

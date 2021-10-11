@@ -11,7 +11,7 @@ from accounts.permissions import *
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BeMyBabyAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_feed_objects(self):
