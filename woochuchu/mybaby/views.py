@@ -1,5 +1,6 @@
 from datetime import date
 from django.shortcuts import render, get_object_or_404
+from requests.api import request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -8,11 +9,12 @@ from .models import *
 import json
 from json.decoder import JSONDecodeError
 from accounts.permissions import *
+
 # Create your views here.
 
 class MyBabyAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_feed_objects(self):
@@ -33,8 +35,10 @@ class MyBabyAPIView(APIView):
                 feed_serializer = MyBabySerializer(feed)
                 #피드 댓글 처리
                 comments = self.get_comment_objects(feed.id)
+                comments_count = len(comments)
                 comment_serializer = MyBabyCommentSerializer(comments, many=True)
                 comment = {
+                    "comments_count": comments_count,
                     "comments": comment_serializer.data
                 }
                 #피드 좋아요 처리
@@ -101,7 +105,7 @@ class MyBabyAPIView(APIView):
 
 class MyBabyDeletePutView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, feed_id):
@@ -175,7 +179,7 @@ class MyBabyDeletePutView(APIView):
 
 class MyBabyCommentAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, feed_id):
@@ -242,7 +246,7 @@ class MyBabyCommentAPIView(APIView):
 
 class MyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, comment_id):
@@ -326,7 +330,7 @@ class MyBabyCommentDeletePutAPIView(APIView):
 
 class MyBabyLikeAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, user, feed_id):
