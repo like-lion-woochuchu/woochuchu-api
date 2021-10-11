@@ -102,7 +102,7 @@ class BeMyBabyAPIView(APIView):
 
 class BeMyBabyDeletePutView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
     def get_object(self, feed_id):
         return BeMyBaby.objects.get(id=feed_id)
@@ -205,7 +205,7 @@ class BeMyBabyDeletePutView(APIView):
 
 class BeMyBabyCommentAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, feed_id):
@@ -250,7 +250,7 @@ class BeMyBabyCommentAPIView(APIView):
 
 class BeMyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, comment_id):
@@ -356,7 +356,7 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
 
 class BeMyBabyLikeAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, user, feed_id):

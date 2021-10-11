@@ -14,7 +14,7 @@ from accounts.permissions import *
 
 class MyBabyAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_feed_objects(self):
@@ -105,7 +105,7 @@ class MyBabyAPIView(APIView):
 
 class MyBabyDeletePutView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, feed_id):
@@ -179,7 +179,7 @@ class MyBabyDeletePutView(APIView):
 
 class MyBabyCommentAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthenticatedOrReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, feed_id):
@@ -246,7 +246,7 @@ class MyBabyCommentAPIView(APIView):
 
 class MyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_object(self, comment_id):
@@ -330,7 +330,7 @@ class MyBabyCommentDeletePutAPIView(APIView):
 
 class MyBabyLikeAPIView(APIView):
     permission_classes = [
-        JwtPermission.IsAuthorUpdateDeleteorReadOnly
+        JwtPermission
     ]
 
     def get_objects(self, user, feed_id):

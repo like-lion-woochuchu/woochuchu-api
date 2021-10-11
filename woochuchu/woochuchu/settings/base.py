@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'accounts',
     'mybaby',
     'bemybaby',
@@ -45,6 +46,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -138,5 +141,5 @@ STATIC_ROOT = Path(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
-#GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
+# GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
+# GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
