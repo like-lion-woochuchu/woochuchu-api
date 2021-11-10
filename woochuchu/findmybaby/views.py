@@ -16,15 +16,11 @@ class FindMyBabyAPIView(APIView):
     def get_comment_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
-#댓글, 좋아요 개수 다 불러오기 -> 일단 페이지네이션 생각 안하고
+    # 페이지네이션 고려
+    # filter 기능 고려 (쿼리스트링 사용 예정)
     def get(self, request):
-    #완성 시킨 후 필터로 유저가 좋아하는 동물만 불러오도록 추가
-        """
-        피드를 조회합니다.
-        """
         try:
             feeds = self.get_feed_objects()
-            # comments = self.get_comment_objects()
             serializer = FindMyBabySerializer(feeds, many=True)
             data = {
                 "results": {
@@ -49,9 +45,8 @@ class FindMyBabyAPIView(APIView):
         새 피드를 작성합니다.
         """
         try:
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
             serializer = FindMyBabySerializer(data=request.data)
-            # 주소 고민을 해야됨
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -89,12 +84,11 @@ class FindMyBabyDeletePutAPIView(APIView):
         JwtPermission
     ]
     def get_object(self, feed_id):
-        return FindMyBaby.objects.get(id=feed_id)
+        feed = FindMyBaby.objects.get(id=feed_id)
+        
+        return feed
 
     def put(self, request, feed_id):
-        """
-        피드를 수정합니다.
-        """
         try:
             feed = self.get_object(feed_id=feed_id)
             if request.user_id != feed.user.id:

@@ -22,7 +22,7 @@ class BeMyBaby(models.Model):
 
 class BeMyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    bemybaby = models.ForeignKey('BeMyBaby', on_delete=models.CASCADE)
+    bemybaby = models.ForeignKey('BeMyBaby', related_name="comments", on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

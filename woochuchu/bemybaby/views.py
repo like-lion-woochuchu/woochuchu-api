@@ -15,7 +15,7 @@ class BeMyBabyAPIView(APIView):
     ]
 
     def get_feed_objects(self):
-        return BeMyBaby.objects.all().order_by('-id')
+        return BeMyBaby.objects.all().prefetch_related("comments").order_by('-id')
 
     def get_comment_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
@@ -25,32 +25,11 @@ class BeMyBabyAPIView(APIView):
         피드를 조회합니다.
         """
         try :
-            comment_paired_feeds = []
             feeds = self.get_feed_objects()
-            for feed in feeds:
-                #피드 본문 처리
-                feed_serializer = BeMyBabySerializer(feed)
-                #피드 댓글 처리
-                comments = self.get_comment_objects(feed.id)
-                comments_count = len(comments)
-                comment_serializer = BeMyBabyCommentSerializer(comments, many=True)
-                comment = {
-                    "comments_count": comments_count,
-                    "comments": comment_serializer.data
-                }
-                #피드 좋아요 처리
-                likes = BeMyBabyLike.objects.filter(bemybaby_id=feed.id)
-                likes_count = likes.count()
-                data = feed_serializer.data
-                likes = {
-                    "likes_count": likes_count
-                }
-                data.update(comment)
-                data.update(likes)
-                comment_paired_feeds.append(data)
+            serializer = BeMyBabySerializer(feeds, many=True)
             data = {
                 "results": {
-                    "data": comment_paired_feeds
+                    "data": serializer.data
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)

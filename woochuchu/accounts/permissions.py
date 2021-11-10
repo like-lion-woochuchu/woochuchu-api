@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 from .token import decode_token
 from .models import User
 from rest_framework.response import Response
@@ -40,4 +40,24 @@ class JwtPermission(BasePermission):
                     "msg": "토큰이 유효하지 않습니다."
                 }
             }
+            return False
+    
+    def has_object_permission(self, request, view, obj):
+        try:
+            token = get_jwt(request)
+            request.user_id = token[1]
+            request.user_uuid = token[0]
+
+            if request.method in SAFE_METHODS:
+                return True
+        
+            else:
+                if request.user_id == obj.user.id:
+                    return True
+        
+            return False
+        
+        except Exception as e:
+            print(e)
+
             return False
