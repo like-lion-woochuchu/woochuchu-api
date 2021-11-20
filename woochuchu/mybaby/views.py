@@ -18,7 +18,7 @@ class MyBabyAPIView(APIView):
     ]
 
     def get_feed_objects(self):
-        return MyBaby.objects.all().order_by('-id')
+        return MyBaby.objects.all().prefetch_related("comments", "likes").order_by('-id')
 
     def get_comment_objects(self, feed_id):
         return MyBabyComment.objects.filter(mybaby_id=feed_id).order_by('id')
@@ -44,9 +44,19 @@ class MyBabyAPIView(APIView):
                 #피드 좋아요 처리
                 likes = MyBabyLike.objects.filter(mybaby_id=feed.id)
                 likes_count = likes.count()
+                user_like = 0 
+                '''
+                try: 
+                    user = request.user_id
+                    print(user in likes.user_id)
+                    user_like = 1
+                except Exception as e:
+                    print(e)
+                '''
                 data = feed_serializer.data
                 likes = {
-                    "likes_count": likes_count
+                    "likes_count": likes_count,
+                    "user_like" : user_like
                 }
                 data.update(comment)
                 data.update(likes)
@@ -59,7 +69,6 @@ class MyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
             data = {
                 "results":{
                     "msg": "정상적인 접근이 아닙니다.",
@@ -73,7 +82,7 @@ class MyBabyAPIView(APIView):
         새 피드를 작성합니다.
         """
         try:
-            request.data['user'] = request.user.id
+            request.data['user'] = int(request.user_id)
             serializer = MyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
