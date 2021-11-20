@@ -49,7 +49,8 @@ class BeMyBabyAPIView(APIView):
         새 피드를 작성합니다.
         """
         try:
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
+            request.data['adopt_flag'] = 0
             serializer = BeMyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -58,7 +59,7 @@ class BeMyBabyAPIView(APIView):
                         "msg": "데이터가 성공적으로 저장되었습니다."
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK ) 
+                return Response(data=data, status=status.HTTP_200_OK) 
 
             else:
                 data = {

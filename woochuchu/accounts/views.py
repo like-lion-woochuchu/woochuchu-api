@@ -32,12 +32,12 @@ class AuthViewSet(viewsets.GenericViewSet):
             )
 
             payload_value = str(user.uuid) + ":" + str(user.id)
-            username = user.username
+            nickname = user.nickname
             profile_img = user.profile_img
-            #payload 에 username, userimgurl 포함
+            #payload 에 nickname, userimgurl 포함
             payload = {
                 "subject": payload_value,
-                "username": username,
+                "nickname": nickname,
                 "profile_img": profile_img
             }
             # refresh token 잠시 보류
