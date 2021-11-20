@@ -41,11 +41,9 @@ class FindMyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """
-        새 피드를 작성합니다.
-        """
         try:
             request.data['user'] = request.user_id
+            request.data['find_flag'] = 0
             serializer = FindMyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -79,19 +77,43 @@ class FindMyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class FindMyBabyDeletePutAPIView(APIView):
+class FindMyBabyDeatilAPIView(APIView):
     permission_classes = [
         JwtPermission
     ]
+
     def get_object(self, feed_id):
         feed = FindMyBaby.objects.get(id=feed_id)
         
         return feed
+    
+    def get(self, request, feed_id):
+        try:
+            feed = self.get_object(feed_id)
+            serializer = FindMyBabySerializer(feed)
+            data = {
+                "results": {
+                    "data": serializer.data
+                }
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # unexpected error
+            print(e)
+            data = {
+                "results": {
+                    "msg": "정상적인 접근이 아닙니다.",
+                    "code": "E5000"
+                }
+            }
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def put(self, request, feed_id):
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user_id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -146,12 +168,9 @@ class FindMyBabyDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, feed_id):
-        """
-        피드를 삭제합니다.
-        """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user_id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -288,7 +307,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['findmybaby'] = comment.findmybaby_id
-            if request.user_id != comment.user.id:
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 

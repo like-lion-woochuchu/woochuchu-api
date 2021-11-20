@@ -28,7 +28,7 @@ class JwtPermission(BasePermission):
     def has_permission(self, request, view):
         try:
             token = get_jwt(request)
-            request.user_id = token[1]
+            request.user_id = int(token[1])
             request.user_uuid = token[0]
 
             return True
