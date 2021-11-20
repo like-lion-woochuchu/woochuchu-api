@@ -81,10 +81,8 @@ class AuthViewSet(viewsets.GenericViewSet):
                 user_data = request.data['user']
                 user_uuid = str(uuid.uuid4()).replace("-", "")
                 user_data['uuid'] = user_uuid
-
                 address_name = request.data['address']['address_name']
-                address_name_detail = request.data['address'][
-                    'address_name_detail'] if request.data['address']['address_name_detail'] else ""
+                address_name_detail = request.data['address'].get("address_name_detail") if request.data['address'].get("address_name_detail") else ""
 
                 try:
                     address_res = get_address(address_name)
@@ -181,7 +179,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                 # request.data['animals'] : Array of animal ids
 
                 user_data['animals'] = request.data['animals']
-                if user_data['address'] is None:
+                if user_data.get("address") is None:
                     user_data['address'] = address_serializer.data['id']
                 
                 user_serializer = UserSerializer(data=user_data)
