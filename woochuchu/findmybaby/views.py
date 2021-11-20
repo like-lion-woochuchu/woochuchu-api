@@ -209,7 +209,7 @@ class FindMyBabyDeatilAPIView(APIView):
                 }
             }
 
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FindMyBabyCommentAPIView(APIView):
     permission_classes = [

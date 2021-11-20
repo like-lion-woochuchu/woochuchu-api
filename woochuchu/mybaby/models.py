@@ -16,7 +16,7 @@ class MyBaby(models.Model):
 
 class MyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    mybaby = models.ForeignKey('MyBaby',related_name='comments', on_delete=models.CASCADE)
+    mybaby = models.ForeignKey('MyBaby', related_name='comments', on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -26,7 +26,7 @@ class MyBabyComment(models.Model):
         db_table = 'mybaby_comment'
 
 class MyBabyLike(models.Model):
-    mybaby = models.ForeignKey('MyBaby', related_name='likes',on_delete=models.CASCADE)
+    mybaby = models.ForeignKey('MyBaby', related_name='likes', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
