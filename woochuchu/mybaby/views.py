@@ -28,38 +28,24 @@ class MyBabyAPIView(APIView):
         try :
             feeds = self.get_feed_objects()
             serializer = MyBabySerializer(feeds, many=True)
-
-            # for feed in feeds:
-            #     #피드 본문 처리
-            #     feed_serializer = MyBabySerializer(feed)
-            #     #피드 댓글 처리
-            #                     #피드 좋아요 처리
-            #     likes = MyBabyLike.objects.filter(mybaby_id=feed.id)
-            #     likes_count = likes.count()
-            #     user_like = 0 
-
-            #     try: 
-            #         user = request.user_id
-            #         print(user in likes.user_id)
-            #         user_like = 1
-            #     except Exception as e:
-            #         print(e)
-
-            #     data = feed_serializer.data
-            #     likes = {
-            #         "likes_count": likes_count,
-            #         "user_like" : user_like
-            #     }
-            #     data.update(comment)
-            #     data.update(likes)
-
-            #     comment_paired_feeds.append(data)
-            
+            for feed in serializer.data:
+                likes_count, user_like_flg = 0, 0
+                feed['user_like_flg'] = user_like_flg
+                liked = feed['likes']
+                likes_count = len(liked)
+                for like in liked:
+                    if like['user'] == request.user_id:
+                        user_like_flg = 1
+                        feed['user_like_flg'] = user_like_flg
+                        break
+                del feed['likes']
+                feed['likes_count'] = likes_count
             data = {
                 "results": {
                     "data": serializer.data
                 }
             }
+
             return Response(data=data, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -69,6 +55,7 @@ class MyBabyAPIView(APIView):
                     "code": "E5000"
                 }
             }
+
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -398,4 +385,4 @@ class MyBabyLikeAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
