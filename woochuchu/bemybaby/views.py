@@ -21,9 +21,6 @@ class BeMyBabyAPIView(APIView):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
 
     def get(self, request):
-        """
-        피드를 조회합니다.
-        """
         try :
             feeds = self.get_feed_objects()
             serializer = BeMyBabySerializer(feeds, many=True)
@@ -45,11 +42,9 @@ class BeMyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """
-        새 피드를 작성합니다.
-        """
         try:
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
+            request.data['adopt_flag'] = 0
             serializer = BeMyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -58,7 +53,7 @@ class BeMyBabyAPIView(APIView):
                         "msg": "데이터가 성공적으로 저장되었습니다."
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK ) 
+                return Response(data=data, status=status.HTTP_200_OK) 
 
             else:
                 data = {
@@ -92,7 +87,7 @@ class BeMyBabyDeletePutView(APIView):
         """
         try :
             feed = self.get_object(feed_id=feed_id)
-            if request.user.id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -102,7 +97,7 @@ class BeMyBabyDeletePutView(APIView):
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
             else:
-                request.data['user'] = request.user.id
+                request.data['user'] = request.user_id
                 serializer = BeMyBabySerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -142,18 +137,16 @@ class BeMyBabyDeletePutView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, feed_id):
-        """
-        피드를 삭제합니다.
-        """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user.id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
                     }
                 }
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+            
             else:
                 feed.delete()
                 data = {
@@ -196,7 +189,7 @@ class BeMyBabyCommentAPIView(APIView):
         """
         try:
             request.data['bemybaby'] = feed_id
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
             serializer = BeMyBabyCommentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.bemybaby_id = feed_id
@@ -242,7 +235,7 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['bemybaby'] = comment.bemybaby_id
-            if request.user.id != comment.user.id:
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -250,8 +243,9 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
                 }
 
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+            
             else:
-                request.data['user'] = request.user.id
+                request.data['user'] = request.user_id
                 serializer = BeMyBabyCommentSerializer(comment, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -291,12 +285,9 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, comment_id):
-        """
-        댓글을 삭제합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
-            if request.user.id != comment.user.id:
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 

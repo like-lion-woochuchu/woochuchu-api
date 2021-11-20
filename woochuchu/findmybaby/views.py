@@ -220,9 +220,6 @@ class FindMyBabyCommentAPIView(APIView):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
     def get(self, request, feed_id):
-        """
-        특정 피드의 댓글들을 조회합니다.
-        """
         try:
             comments = self.get_objects(feed_id=feed_id)
             serializer = FindMyBabyCommentSerializer(comments, many=True)
@@ -248,9 +245,6 @@ class FindMyBabyCommentAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, feed_id):
-        """
-        특정 피드에 댓글을 작성합니다.
-        """
         try:
             request.data['findmybaby'] = feed_id
             request.data['user'] = request.user_id
@@ -301,9 +295,6 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
         return FindMyBabyComment.objects.get(id=comment_id)
 
     def put(self, request, comment_id):
-        """
-        댓글을 수정합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['findmybaby'] = comment.findmybaby_id
@@ -361,9 +352,6 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, comment_id):
-        """
-        댓글을 삭제합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             if request.user_id != comment.user.id:
