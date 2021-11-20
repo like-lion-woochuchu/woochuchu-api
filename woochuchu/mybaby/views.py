@@ -29,14 +29,14 @@ class MyBabyAPIView(APIView):
             feeds = self.get_feed_objects()
             serializer = MyBabySerializer(feeds, many=True)
             for feed in serializer.data:
-                likes_count, user_like_flg = 0, 0
-                feed['user_like_flg'] = user_like_flg
+                likes_count, user_like_flag = 0, 0
+                feed['user_like_flag'] = user_like_flag
                 liked = feed['likes']
                 likes_count = len(liked)
                 for like in liked:
                     if like['user'] == request.user_id:
                         user_like_flg = 1
-                        feed['user_like_flg'] = user_like_flg
+                        feed['user_like_flag'] = user_like_flag
                         break
                 del feed['likes']
                 feed['likes_count'] = likes_count
