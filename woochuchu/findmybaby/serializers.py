@@ -9,7 +9,7 @@ class FindMyBabyCommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class FindMyBabySerializer(serializers.ModelSerializer):
-    comments = FindMyBabyCommentSerializer(many=True)
+    comments = FindMyBabyCommentSerializer(many=True, read_only=True)
     class Meta:
         model = FindMyBaby
         fields = '__all__'

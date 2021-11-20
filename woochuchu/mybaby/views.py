@@ -9,9 +9,6 @@ from .models import *
 import json
 from json.decoder import JSONDecodeError
 from accounts.permissions import *
-
-# Create your views here.
-
 class MyBabyAPIView(APIView):
     permission_classes = [
         JwtPermission

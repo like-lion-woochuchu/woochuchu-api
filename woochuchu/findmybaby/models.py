@@ -17,7 +17,7 @@ class FindMyBaby(models.Model):
     phone = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.IntegerField()
+    find_flag = models.IntegerField()
 
     class Meta:
         managed = False

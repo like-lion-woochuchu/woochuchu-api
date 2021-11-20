@@ -16,15 +16,11 @@ class FindMyBabyAPIView(APIView):
     def get_comment_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
-#댓글, 좋아요 개수 다 불러오기 -> 일단 페이지네이션 생각 안하고
+    # 페이지네이션 고려
+    # filter 기능 고려 (쿼리스트링 사용 예정)
     def get(self, request):
-    #완성 시킨 후 필터로 유저가 좋아하는 동물만 불러오도록 추가
-        """
-        피드를 조회합니다.
-        """
         try:
             feeds = self.get_feed_objects()
-            # comments = self.get_comment_objects()
             serializer = FindMyBabySerializer(feeds, many=True)
             data = {
                 "results": {
@@ -45,13 +41,10 @@ class FindMyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """
-        새 피드를 작성합니다.
-        """
         try:
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
+            request.data['find_flag'] = 0
             serializer = FindMyBabySerializer(data=request.data)
-            # 주소 고민을 해야됨
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -84,20 +77,43 @@ class FindMyBabyAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class FindMyBabyDeletePutAPIView(APIView):
+class FindMyBabyDeatilAPIView(APIView):
     permission_classes = [
         JwtPermission
     ]
+
     def get_object(self, feed_id):
-        return FindMyBaby.objects.get(id=feed_id)
+        feed = FindMyBaby.objects.get(id=feed_id)
+        
+        return feed
+    
+    def get(self, request, feed_id):
+        try:
+            feed = self.get_object(feed_id)
+            serializer = FindMyBabySerializer(feed)
+            data = {
+                "results": {
+                    "data": serializer.data
+                }
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # unexpected error
+            print(e)
+            data = {
+                "results": {
+                    "msg": "정상적인 접근이 아닙니다.",
+                    "code": "E5000"
+                }
+            }
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def put(self, request, feed_id):
-        """
-        피드를 수정합니다.
-        """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user_id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -152,12 +168,9 @@ class FindMyBabyDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, feed_id):
-        """
-        피드를 삭제합니다.
-        """
         try:
             feed = self.get_object(feed_id=feed_id)
-            if request.user_id != feed.user.id:
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -294,7 +307,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['findmybaby'] = comment.findmybaby_id
-            if request.user_id != comment.user.id:
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
