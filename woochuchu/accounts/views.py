@@ -16,8 +16,9 @@ from django.contrib.gis.geos import Point
 # 회원가입 부분 serializer 저장 시 원자성 보장하지 않음
 
 class AuthViewSet(viewsets.GenericViewSet):
-    def get_serializer_class(self):
-        return super().get_serializer_class()
+    serializer_class = [
+        UserSerializer, AnimalSerializer, AddressSerializer, AddressRegionSerializer, AddressRoadSerializer
+        ]
 
     @action(methods=['POST'], detail=False)
     def signin(self, request):
@@ -31,8 +32,13 @@ class AuthViewSet(viewsets.GenericViewSet):
             )
 
             payload_value = str(user.uuid) + ":" + str(user.id)
+            nickname = user.nickname
+            profile_img = user.profile_img
+            #payload 에 nickname, userimgurl 포함
             payload = {
-                "subject": payload_value
+                "subject": payload_value,
+                "nickname": nickname,
+                "profile_img": profile_img
             }
             # refresh token 잠시 보류
             access_token = generate_token(payload, "access")
@@ -173,9 +179,11 @@ class AuthViewSet(viewsets.GenericViewSet):
                     print(e)
 
                 # request.data['animals'] : Array of animal ids
-                
+
                 user_data['animals'] = request.data['animals']
-                user_data['address'] = address_serializer.data['id']
+                if user_data['address'] is None:
+                    user_data['address'] = address_serializer.data['id']
+                
                 user_serializer = UserSerializer(data=user_data)
 
                 if user_serializer.is_valid():
