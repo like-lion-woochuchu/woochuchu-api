@@ -2,7 +2,7 @@ from woochuchu.settings.base import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["7f0b-220-76-68-249.ngrok.io"]
+ALLOWED_HOSTS = ["*"]
 
 LOGGING = {
     'version' : 1,
