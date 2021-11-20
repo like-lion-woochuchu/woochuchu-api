@@ -8,5 +8,4 @@ urlpatterns = [
     path('<int:feed_id>/', BeMyBabyDeletePutView.as_view()),
     path('<int:feed_id>/comments/', BeMyBabyCommentAPIView.as_view()),
     path('comment/<int:comment_id>/', BeMyBabyCommentDeletePutAPIView.as_view()),
-    # path('<int:feed_id>/likes/', BeMyBabyLikeAPIView.as_view()),
 ]

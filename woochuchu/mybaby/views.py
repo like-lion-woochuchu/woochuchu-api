@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from requests.api import request
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
@@ -25,44 +26,26 @@ class MyBabyAPIView(APIView):
         피드를 조회합니다.
         """
         try :
-            comment_paired_feeds = []
             feeds = self.get_feed_objects()
-            for feed in feeds:
-                #피드 본문 처리
-                feed_serializer = MyBabySerializer(feed)
-                #피드 댓글 처리
-                comments = self.get_comment_objects(feed.id)
-                comments_count = len(comments)
-                comment_serializer = MyBabyCommentSerializer(comments, many=True)
-                comment = {
-                    "comments_count": comments_count,
-                    "comments": comment_serializer.data
-                }
-                #피드 좋아요 처리
-                likes = MyBabyLike.objects.filter(mybaby_id=feed.id)
-                likes_count = likes.count()
-                user_like = 0 
-                '''
-                try: 
-                    user = request.user_id
-                    print(user in likes.user_id)
-                    user_like = 1
-                except Exception as e:
-                    print(e)
-                '''
-                data = feed_serializer.data
-                likes = {
-                    "likes_count": likes_count,
-                    "user_like" : user_like
-                }
-                data.update(comment)
-                data.update(likes)
-                comment_paired_feeds.append(data)
+            serializer = MyBabySerializer(feeds, many=True)
+            for feed in serializer.data:
+                likes_count, user_like_flg = 0, 0
+                feed['user_like_flg'] = user_like_flg
+                liked = feed['likes']
+                likes_count = len(liked)
+                for like in liked:
+                    if like['user'] == request.user_id:
+                        user_like_flg = 1
+                        feed['user_like_flg'] = user_like_flg
+                        break
+                del feed['likes']
+                feed['likes_count'] = likes_count
             data = {
                 "results": {
-                    "data": comment_paired_feeds
+                    "data": serializer.data
                 }
             }
+
             return Response(data=data, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -72,6 +55,7 @@ class MyBabyAPIView(APIView):
                     "code": "E5000"
                 }
             }
+
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -79,7 +63,7 @@ class MyBabyAPIView(APIView):
         새 피드를 작성합니다.
         """
         try:
-            request.data['user'] = int(request.user_id)
+            request.data['user'] = request.user_id
             serializer = MyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -120,23 +104,36 @@ class MyBabyDeletePutView(APIView):
     def put(self, request, feed_id):
         try :
             feed = self.get_object(feed_id=feed_id)
-            serializer = MyBabySerializer(feed, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
+            if request.user_id != feed.user_id:
                 data = {
                     "results": {
-                        "msg": "데이터가 성공적으로 저장되었습니다."
+                        "msg": "권한이 없습니다."
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK)
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+
             else:
-                data = {
-                    "results": {
-                        "msg": serializer.errors,
-                        "code": "E4000"
+                request.data['user'] = request.user_id
+                serializer = MyBabySerializer(feed, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    data = {
+                        "results": {
+                            "msg": "데이터가 성공적으로 저장되었습니다."
+                        }
                     }
-                }
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+                    return Response(data=data, status=status.HTTP_200_OK)
+
+                else:
+                    data = {
+                        "results": {
+                            "msg": serializer.errors,
+                            "code": "E4000"
+                        }
+                    }
+
+                    return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         except MyBaby.DoesNotExist:
             data = {
                 "results": {
@@ -145,6 +142,7 @@ class MyBabyDeletePutView(APIView):
                 }
             }
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
             print(e)
             data = {
@@ -158,13 +156,25 @@ class MyBabyDeletePutView(APIView):
     def delete(self, request, feed_id):
         try:
             feed = self.get_object(feed_id=feed_id)
-            feed.delete()
-            data = {
-                "results": {
-                    "msg": "데이터가 성공적으로 삭제되었습니다."
+            if request.user_id != feed.user_id:
+                data = {
+                    "results": {
+                        "msg": "권한이 없습니다." 
+                    }
                 }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
+
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+
+            else:
+                feed.delete()
+                data = {
+                    "results": {
+                        "msg": "데이터가 성공적으로 삭제되었습니다."
+                    }
+                }
+
+                return Response(data=data, status=status.HTTP_200_OK)
+
         except MyBaby.DoesNotExist:
             data = {
                 "results": {
@@ -172,8 +182,11 @@ class MyBabyDeletePutView(APIView):
                     "code": "E4040"
                 }
             }
+
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
+            # unexpected error
             print(e)
             data = {
                 "results": {
@@ -181,6 +194,7 @@ class MyBabyDeletePutView(APIView):
                     "code": "E5000"
                 }
             }
+
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class MyBabyCommentAPIView(APIView):
@@ -189,40 +203,18 @@ class MyBabyCommentAPIView(APIView):
     ]
 
     def get_objects(self, feed_id):
-        return MyBabyComment.objects.filter(mybaby_id=feed_id)
-    '''
-    def get(self, request, feed_id):
-        """
-        특정 피드의 댓글들을 조회합니다.
-        """
-        try:
-            comments = self.get_objects(feed_id=feed_id)
-            serializer = MyBabyCommentSerializer(comments, many=True)
-            data = {
-                "results": {
-                    "data": serializer.data
-                }
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            data={
-                "results": {
-                    "msg": "정상적인 접근이 아닙니다.",
-                    "code": "E5000"
-                }
-            }
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-    '''
+        return MyBabyComment.objects.filter(mybaby_id=feed_id).order_by('id')
+
     def post(self, request, feed_id):
         """
         특정 피드에 댓글을 작성합니다.
         """
         try:
             request.data['mybaby'] = feed_id
-            request.data['user'] = request.user.id
+            request.data['user'] = request.user_id
             serializer = MyBabyCommentSerializer(data=request.data)
             if serializer.is_valid():
+                serializer.mybaby_id = feed_id
                 serializer.save()
                 data = {
                     "results": {
@@ -248,7 +240,7 @@ class MyBabyCommentAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class MyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [
@@ -264,23 +256,46 @@ class MyBabyCommentDeletePutAPIView(APIView):
         """
         try:
             comment = self.get_object(comment_id=comment_id)
-            serializer = MyBabyCommentSerializer(comment, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
+            request.data['mybaby'] = comment.mybaby_id
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
-                        "msg": "데이터가 성공적으로 저장되었습니다."
+                        "msg": "권한이 없습니다." 
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK) 
+
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+
             else:
-                data = {
-                    "results": {
-                        "msg": serializer.errors,
-                        "code": "E4000"
+                request.data['user'] = request.user_id
+                serializer = MyBabyCommentSerializer(comment, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    data = {
+                        "results": {
+                            "msg": "데이터가 성공적으로 저장되었습니다."
+                        }
                     }
+
+                    return Response(data=data, status=status.HTTP_200_OK) 
+                else:
+                    data = {
+                        "results": {
+                            "msg": serializer.errors,
+                            "code": "E4000"
+                        }
+                    }
+
+                    return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        except MyBabyComment.DoesNotExist:
+            data = {
+                "results": {
+                    "msg": "일치하는 데이터가 존재하지 않습니다.",
+                    "code": "E4040"
                 }
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            }
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
             print(e)
             data = {
@@ -297,7 +312,7 @@ class MyBabyCommentDeletePutAPIView(APIView):
         """
         try:
             comment = self.get_object(comment_id=comment_id)
-            if request.user.id != comment.user.id:
+            if request.user_id != comment.user_id:
                 data = {
                     "results": {
                         "msg": "권한이 없습니다." 
@@ -332,34 +347,32 @@ class MyBabyCommentDeletePutAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class MyBabyLikeAPIView(APIView):
     permission_classes = [
         JwtPermission
     ]
 
-    def get_objects(self, user, feed_id):
-        return MyBabyLike.objects.get(mybaby_id=feed_id, user_id=user.id)
+    def get_objects(self, user_id, feed_id):
+        return MyBabyLike.objects.get(mybaby_id=feed_id, user_id=user_id)
 
     def post(self, request, feed_id):
         try:
-            like = self.get_objects(request.user, feed_id)
+            like = self.get_objects(request.user_id, feed_id)
             like.delete()
-            like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
             data = {
                 "results": {
-                    "data": like_count 
+                    "like_flg": 0
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
 
         except MyBabyLike.DoesNotExist:
-            MyBabyLike.objects.create(user=request.user, mybaby_id=feed_id)
-            like_count = MyBabyLike.objects.filter(mybaby_id=feed_id).count()
+            MyBabyLike.objects.create(user_id=request.user_id, mybaby_id=feed_id)
             data = {
                 "results": {
-                    "data": like_count 
+                    "like_flg": 1
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
@@ -372,4 +385,4 @@ class MyBabyLikeAPIView(APIView):
                     "code": "E5000"
                 }
             }
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
