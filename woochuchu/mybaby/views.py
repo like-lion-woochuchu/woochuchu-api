@@ -10,6 +10,7 @@ from .models import *
 import json
 from json.decoder import JSONDecodeError
 from accounts.permissions import *
+
 class MyBabyAPIView(APIView):
     permission_classes = [
         JwtPermission
@@ -30,16 +31,16 @@ class MyBabyAPIView(APIView):
             serializer = MyBabySerializer(feeds, many=True)
             for feed in serializer.data:
                 likes_count, user_like_flag = 0, 0
-                feed['user_like_flag'] = user_like_flag
                 liked = feed['likes']
                 likes_count = len(liked)
                 for like in liked:
+                    print(like['user'], type(like['user']))
                     if like['user'] == request.user_id:
-                        user_like_flg = 1
-                        feed['user_like_flag'] = user_like_flag
+                        user_like_flag = 1
                         break
                 del feed['likes']
                 feed['likes_count'] = likes_count
+                feed['user_like_flag'] = user_like_flag
             data = {
                 "results": {
                     "data": serializer.data
@@ -363,7 +364,7 @@ class MyBabyLikeAPIView(APIView):
             like.delete()
             data = {
                 "results": {
-                    "like_flg": 0
+                    "like_flag": 0
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
@@ -372,7 +373,7 @@ class MyBabyLikeAPIView(APIView):
             MyBabyLike.objects.create(user_id=request.user_id, mybaby_id=feed_id)
             data = {
                 "results": {
-                    "like_flg": 1
+                    "like_flag": 1
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
