@@ -1,3 +1,4 @@
+from os import stat
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
@@ -97,6 +98,15 @@ class FindMyBabyDeatilAPIView(APIView):
                 }
             }
             return Response(data=data, status=status.HTTP_200_OK)
+
+        except FindMyBaby.DoesNotExist:
+            data = {
+                "results": {
+                    "msg": "일치하는 데이터가 존재하지 않습니다.",
+                    "code": "E4040"
+                }
+            }
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
             # unexpected error
