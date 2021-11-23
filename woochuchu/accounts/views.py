@@ -63,7 +63,7 @@ class AuthViewSet(viewsets.GenericViewSet):
             return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
         except Exception as e:
-            print(e.message)
+            print(e)
 
             data = {
                 "results": {
