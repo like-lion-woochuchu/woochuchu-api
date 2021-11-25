@@ -24,12 +24,17 @@ class NoteGetPostAPIView(APIView):
         except User.DoesNotExist:
             raise PermissionError
         
-        return Note.objects.filter(
-            Q(sender=user_id) |
-            Q(receiver=user_id)
-            ).select_related("receiver").order_by(
-            "-id"
-        )
+        else:
+            objects = Note.objects.filter(
+                Q(sender=user_id) |
+                Q(receiver=user_id)
+                ).select_related("receiver", "sender").values(
+                    "id", "receiver_id","body", "seen_flag", "created_at"
+                ).order_by(
+                "-id"
+                )
+
+        return objects
 
     def get(self, request):
         try:
