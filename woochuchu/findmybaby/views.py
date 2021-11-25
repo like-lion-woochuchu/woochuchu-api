@@ -1,14 +1,31 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import pagination, status
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from accounts.permissions import *
-class FindMyBabyAPIView(APIView):
+from woochuchu.pagination import PaginationHandlerMixin
+from collections import OrderedDict
+class BasicPagination(pagination.PageNumberPagination):
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+    page_query_param = 'page'
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('feed_count', self.page.paginator.count),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('data', data)
+        ]))
+
+class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
     permission_classes = [
         JwtPermission
     ]
+    pagination_class = BasicPagination
 
     def get_feed_objects(self):
         return FindMyBaby.objects.all().prefetch_related("comments").order_by('-id')
@@ -21,11 +38,13 @@ class FindMyBabyAPIView(APIView):
     def get(self, request):
         try:
             feeds = self.get_feed_objects()
-            serializer = FindMyBabySerializer(feeds, many=True)
+            page = self.paginate_queryset(feeds)
+            if page is not None:
+                serializer = self.get_paginated_response(FindMyBabySerializer(page, many=True).data)
+            else:
+                serializer = FindMyBabySerializer(feeds, many=True)
             data = {
-                "results": {
-                    "data": serializer.data
-                }
+                "results": serializer.data
             }
             return Response(data=data, status=status.HTTP_200_OK)
 

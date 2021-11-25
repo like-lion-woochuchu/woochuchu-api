@@ -2,7 +2,7 @@ from datetime import date
 from django.shortcuts import render, get_object_or_404
 from requests.api import request
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import pagination, status
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from .serializers import *
@@ -10,11 +10,28 @@ from .models import *
 import json
 from json.decoder import JSONDecodeError
 from accounts.permissions import *
+from woochuchu.pagination import PaginationHandlerMixin
+from collections import OrderedDict
 
-class MyBabyAPIView(APIView):
+class BasicPagination(pagination.PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+    page_query_param = 'page'
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('feed_count', self.page.paginator.count),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('data', data)
+        ]))
+
+class MyBabyAPIView(APIView, PaginationHandlerMixin):
     permission_classes = [
         JwtPermission
     ]
+    pagination_class = BasicPagination
 
     def get_feed_objects(self):
         return MyBaby.objects.all().prefetch_related("comments", "likes").order_by('-id')
@@ -23,18 +40,19 @@ class MyBabyAPIView(APIView):
         return MyBabyComment.objects.filter(mybaby_id=feed_id).order_by('id')
 
     def get(self, request):
-        """
-        피드를 조회합니다.
-        """
         try :
             feeds = self.get_feed_objects()
-            serializer = MyBabySerializer(feeds, many=True)
-            for feed in serializer.data:
+            page = self.paginate_queryset(feeds)
+            if page is not None:
+                serializer = self.get_paginated_response(MyBabySerializer(page, many=True).data)
+            else:
+                serializer = MyBabySerializer(feeds, many=True)
+
+            for feed in serializer.data['data']:
                 likes_count, user_like_flag = 0, 0
                 liked = feed['likes']
                 likes_count = len(liked)
                 for like in liked:
-                    print(like['user'], type(like['user']))
                     if like['user'] == request.user_id:
                         user_like_flag = 1
                         break
@@ -42,14 +60,13 @@ class MyBabyAPIView(APIView):
                 feed['likes_count'] = likes_count
                 feed['user_like_flag'] = user_like_flag
             data = {
-                "results": {
-                    "data": serializer.data
-                }
+                "results": serializer.data
             }
 
             return Response(data=data, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print(e)
             data = {
                 "results":{
                     "msg": "정상적인 접근이 아닙니다.",
