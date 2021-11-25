@@ -146,3 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
+
+REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%Y-%m-%dT%H:%M",
+}

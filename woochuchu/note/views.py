@@ -27,7 +27,9 @@ class NoteGetPostAPIView(APIView):
         return Note.objects.filter(
             Q(sender=user_id) |
             Q(receiver=user_id)
-            ).order_by('created_at')
+            ).select_related("receiver").order_by(
+            "-id"
+        )
 
     def get(self, request):
         try:
@@ -107,8 +109,8 @@ class NoteDetailAPIView(APIView):
         objects = Note.objects.filter(
             Q(Q(sender=subject_id_1) & Q(receiver=subject_id_2)) |
             Q(Q(sender=subject_id_2) & Q(receiver=subject_id_1))
-        ).order_by(
-            "created_at"
+        ).select_related("receiver", "sender").order_by(
+            "-id"
         )
 
         return objects
