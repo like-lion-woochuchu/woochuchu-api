@@ -1,18 +1,35 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, pagination
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from accounts.permissions import *
+from woochuchu.pagination import PaginationHandlerMixin
+from collections import OrderedDict
 
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
-class BeMyBabyAPIView(APIView):
+class BasicPagination(pagination.PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+    page_query_param = 'page'
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('feed_count', self.page.paginator.count),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('data', data)
+        ]))
+
+class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     permission_classes = [
         JwtPermission
     ]
+    pagination_class = BasicPagination
 
     def get_feed_objects(self):
         return BeMyBaby.objects.all().prefetch_related("comments").order_by('-id')
@@ -23,11 +40,13 @@ class BeMyBabyAPIView(APIView):
     def get(self, request):
         try :
             feeds = self.get_feed_objects()
-            serializer = BeMyBabySerializer(feeds, many=True)
+            page = self.paginate_queryset(feeds)
+            if page is not None:
+                serializer = self.get_paginated_response(BeMyBabySerializer(page, many=True).data)
+            else:
+                serializer = BeMyBabySerializer(feeds, many=True)
             data = {
-                "results": {
-                    "data": serializer.data
-                }
+                "results": serializer.data
             }
             return Response(data=data, status=status.HTTP_200_OK)
 
