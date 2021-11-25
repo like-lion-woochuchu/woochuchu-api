@@ -115,7 +115,7 @@ class NoteDetailAPIView(APIView):
             Q(Q(sender=subject_id_1) & Q(receiver=subject_id_2)) |
             Q(Q(sender=subject_id_2) & Q(receiver=subject_id_1))
         ).select_related("receiver", "sender").order_by(
-            "-id"
+            "id"
         )
 
         return objects
