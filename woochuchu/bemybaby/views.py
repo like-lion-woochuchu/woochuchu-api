@@ -12,7 +12,7 @@ from collections import OrderedDict
 
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BasicPagination(pagination.PageNumberPagination):
-    page_size = 2
+    page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 50
     page_query_param = 'page'
