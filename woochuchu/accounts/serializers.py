@@ -1,17 +1,21 @@
 from rest_framework import serializers
 from .models import *
 
+class AnimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Animal
+        fields = '__all__'
+
+class UserAnimalsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAnimals
+        fields='__all__'
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-
-class AnimalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Animal
-        fields = '__all__'
     
 
 class AddressSerializer(serializers.ModelSerializer):

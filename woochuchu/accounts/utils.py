@@ -31,6 +31,17 @@ def get_address(query, analyze_type=None, page=None, size=None):
 
 # 현재 입력된 주소가 데이터베이스에 존재하는지 확인
 def check_address_exists(address_res):
+    # try:
+    #     address_obj = Address.objects.get(
+    #         address_name=address_res['address_name'],
+    #         address_name_detail=address_name_detail
+    #     )
+
+    #     return address_obj.id
+
+    # except Address.DoesNotExist:
+    #     return False
+
     try:
         if address_res['address_type'] == "ROAD_ADDR":
             address_obj = AddressRoad.objects.get(
@@ -115,7 +126,7 @@ def create_address_data(address_res, address_name_detail):
                     raise ValueError(address_road_serializer.errors)
                 
                 else:
-                    raise ValueError("알 수 없는 오류가 발생하였습니다.")
+                    raise Exception("알 수 없는 오류가 발생하였습니다.")
 
             return address_serializer.data['id']
 
