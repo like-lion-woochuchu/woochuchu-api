@@ -9,6 +9,7 @@ from drf_yasg import openapi
 from accounts.permissions import *
 from woochuchu.pagination import PaginationHandlerMixin
 from collections import OrderedDict
+from accounts.utils import *
 
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BasicPagination(pagination.PageNumberPagination):
@@ -64,6 +65,17 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
         try:
             request.data['user'] = request.user_id
             request.data['adopt_flag'] = 0
+            address_name = request.data["address_name"]
+            address_res = get_address(address_name)
+            address_exists_id = check_address_exists(address_res)
+            
+            if address_exists_id:
+                request.data['address'] = address_exists_id
+                
+            else:
+                address_id = create_address_data(address_res)
+                request.data['address'] = address_id
+
             serializer = BeMyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()

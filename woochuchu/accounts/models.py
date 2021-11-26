@@ -33,7 +33,6 @@ class UserAnimals(models.Model):
 
 class Address(models.Model):
     address_name = models.CharField(max_length=100)
-    address_name_detail = models.CharField(max_length=100, blank=True)
     address_type = models.CharField(max_length=11)
     address_coord = models.PointField()
     created_at = models.DateTimeField(auto_now_add=True)

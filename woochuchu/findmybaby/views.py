@@ -8,6 +8,7 @@ from .models import *
 from accounts.permissions import *
 from woochuchu.pagination import PaginationHandlerMixin
 from collections import OrderedDict
+from accounts.utils import *
 class BasicPagination(pagination.PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
@@ -64,6 +65,17 @@ class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
         try:
             request.data['user'] = request.user_id
             request.data['find_flag'] = 0
+            address_name = request.data["address_name"]
+            address_res = get_address(address_name)
+            address_exists_id = check_address_exists(address_res)
+            
+            if address_exists_id:
+                request.data['address'] = address_exists_id
+                
+            else:
+                address_id = create_address_data(address_res)
+                request.data['address'] = address_id
+                
             serializer = FindMyBabySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()

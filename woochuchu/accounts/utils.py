@@ -31,17 +31,6 @@ def get_address(query, analyze_type=None, page=None, size=None):
 
 # 현재 입력된 주소가 데이터베이스에 존재하는지 확인
 def check_address_exists(address_res):
-    # try:
-    #     address_obj = Address.objects.get(
-    #         address_name=address_res['address_name'],
-    #         address_name_detail=address_name_detail
-    #     )
-
-    #     return address_obj.id
-
-    # except Address.DoesNotExist:
-    #     return False
-
     try:
         if address_res['address_type'] == "ROAD_ADDR":
             address_obj = AddressRoad.objects.get(
@@ -57,7 +46,7 @@ def check_address_exists(address_res):
         return False
 
 # 새로운 주소 데이터 생성
-def create_address_data(address_res, address_name_detail):
+def create_address_data(address_res):
     try:
         with transaction.atomic():
             address_coord = Point(
@@ -66,7 +55,6 @@ def create_address_data(address_res, address_name_detail):
 
             address_data = {
                 'address_name': address_res['address_name'],
-                'address_name_detail': address_name_detail,
                 'address_type': address_res['address_type'],
                 'address_coord': address_coord
             }

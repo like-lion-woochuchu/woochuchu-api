@@ -76,14 +76,13 @@ class AuthViewSet(viewsets.GenericViewSet):
                 user_uuid = str(uuid.uuid4()).replace("-", "")
                 user_data['uuid'] = user_uuid
                 address_name = request.data["address"]["address_name"]
-                address_name_detail = request.data["address"].get("address_name_detail") if request.data["address"].get("address_name_detail") else ""
                 address_res = get_address(address_name)
                 address_exists_id = check_address_exists(address_res)
                 if address_exists_id:
                     user_data['address'] = address_exists_id
                 
                 else:
-                    address_id = create_address_data(address_res, address_name_detail)
+                    address_id = create_address_data(address_res)
                     user_data['address'] = address_id
                 
                 # request.data['animals'] : Array of animal ids
