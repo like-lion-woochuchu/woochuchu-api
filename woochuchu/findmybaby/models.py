@@ -5,6 +5,7 @@ from accounts.models import User, Animal, Address
 class FindMyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.DO_NOTHING)
+    address_detail = models.CharField(max_length=100, blank=True)
     animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=20)
     breed = models.CharField(max_length=45)
