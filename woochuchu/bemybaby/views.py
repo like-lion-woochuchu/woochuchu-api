@@ -35,12 +35,19 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     def get_feed_objects(self):
         return BeMyBaby.objects.all().prefetch_related("comments").order_by('-id')
 
+    def get_filtered_feed_objects(self, animals):
+        return BeMyBaby.objects.filter(animal__in=animals).prefetch_related("comments").order_by('-id')
+
     def get_comment_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
 
     def get(self, request):
         try :
+            params = dict(request.query_params)
             feeds = self.get_feed_objects()
+            if len(params) != 0:
+                animals = list(map(int, params['animals_id'][0].split(',')))
+                feeds = self.get_filtered_feed_objects(animals)
             page = self.paginate_queryset(feeds)
             if page is not None:
                 serializer = self.get_paginated_response(BeMyBabySerializer(page, many=True).data)
