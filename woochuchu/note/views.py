@@ -2,7 +2,7 @@ from django.core.checks import messages
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import NoteSerializer
+from .serializers import NoteSerializer, NoteCreateSerializer
 from .models import *
 from django.db.models import Q
 from accounts.permissions import JwtPermission
@@ -72,11 +72,8 @@ class NoteGetPostAPIView(APIView):
     def post(self, request):
         try:
             request.data['sender'] = request.user_id
-            print(request.data)
             request.data['seen_flag'] = 0
-            serializer = NoteSerializer(data=request.data)
-            print(serializer)
-
+            serializer = NoteCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 data = {
