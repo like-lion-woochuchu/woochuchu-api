@@ -10,8 +10,8 @@ class SenderRecieverSerializer(serializers.ModelSerializer):
         ]
 
 class NoteSerializer(serializers.ModelSerializer):
-    sender = SenderRecieverSerializer(read_only=True)
-    receiver = SenderRecieverSerializer(read_only=True)
+    sender_id = SenderRecieverSerializer(read_only=True)
+    receiver_id = SenderRecieverSerializer(read_only=True)
     class Meta:
         model = Note
         fields = '__all__'

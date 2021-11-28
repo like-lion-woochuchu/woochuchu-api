@@ -72,8 +72,10 @@ class NoteGetPostAPIView(APIView):
     def post(self, request):
         try:
             request.data['sender'] = request.user_id
+            print(request.data)
             request.data['seen_flag'] = 0
             serializer = NoteSerializer(data=request.data)
+            print(serializer)
 
             if serializer.is_valid():
                 serializer.save()
@@ -104,6 +106,8 @@ class NoteGetPostAPIView(APIView):
                     "code": "E5000"
                 }
             }
+
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class NoteDetailAPIView(APIView):
     permission_classes = [
