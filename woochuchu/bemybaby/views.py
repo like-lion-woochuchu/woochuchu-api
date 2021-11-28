@@ -44,8 +44,9 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     def get(self, request):
         try :
             params = dict(request.query_params)
+            print(params)
             feeds = self.get_feed_objects()
-            if len(params) != 0:
+            if 'animals_id' in params.keys():
                 animals = list(map(int, params['animals_id'][0].split(',')))
                 feeds = self.get_filtered_feed_objects(animals)
             page = self.paginate_queryset(feeds)
