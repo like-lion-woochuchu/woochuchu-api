@@ -48,7 +48,6 @@ class MyBabyAPIView(APIView, PaginationHandlerMixin):
             feeds = self.get_feed_objects()
             if 'animals_id' in params.keys():
                 animals = list(map(int, params['animals_id'][0].split(',')))
-                print(animals)
                 feeds = self.get_filtered_feed_objects(animals)
             page = self.paginate_queryset(feeds)
             if page is not None:
