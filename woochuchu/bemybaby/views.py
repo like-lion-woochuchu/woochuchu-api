@@ -76,7 +76,7 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
                 address_id = create_address_data(address_res)
                 request.data['address'] = address_id
 
-            serializer = BeMyBabySerializer(data=request.data)
+            serializer = BeMyBabyCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -129,7 +129,7 @@ class BeMyBabyDeletePutView(APIView):
 
             else:
                 request.data['user'] = request.user_id
-                serializer = BeMyBabySerializer(feed, data=request.data)
+                serializer = BeMyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {

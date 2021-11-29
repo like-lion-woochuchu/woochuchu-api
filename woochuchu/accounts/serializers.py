@@ -19,9 +19,17 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class AddressSerializer(serializers.ModelSerializer):
+    address_coord_x = serializers.SerializerMethodField()
+    address_coord_y = serializers.SerializerMethodField()
+
+    def get_address_coord_x(self, obj):
+        return obj.address_coord[0]
+    
+    def get_address_coord_y(self, obj):
+        return obj.address_coord[1]
     class Meta:
         model = Address
-        fields = ['address_name', 'address_coord']
+        fields = ['address_name', 'address_coord_x', 'address_coord_y']
         read_only_fields = ['created_at', 'updated_at']
 
 

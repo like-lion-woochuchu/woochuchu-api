@@ -30,13 +30,11 @@ class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
     pagination_class = BasicPagination
 
     def get_feed_objects(self):
-        return FindMyBaby.objects.all().prefetch_related("comments").order_by('-id')
+        return FindMyBaby.objects.all().select_related("address").prefetch_related("comments").order_by('-id')
     
     def get_comment_objects(self, feed_id):
         return FindMyBabyComment.objects.filter(findmybaby_id=feed_id).order_by('id')
 
-    # 페이지네이션 고려
-    # filter 기능 고려 (쿼리스트링 사용 예정)
     def get(self, request):
         try:
             feeds = self.get_feed_objects()
@@ -76,7 +74,7 @@ class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
                 address_id = create_address_data(address_res)
                 request.data['address'] = address_id
                 
-            serializer = FindMyBabySerializer(data=request.data)
+            serializer = FindMyBabyCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -165,7 +163,7 @@ class FindMyBabyDeatilAPIView(APIView):
 
             else:
                 request.data['user'] = request.user_id
-                serializer = FindMyBabySerializer(feed, data=request.data)
+                serializer = FindMyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {
