@@ -33,7 +33,7 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     pagination_class = BasicPagination
 
     def get_feed_objects(self):
-        return BeMyBaby.objects.all().prefetch_related("comments").order_by('-id')
+        return BeMyBaby.objects.all().select_related('address').prefetch_related("comments").order_by('-id')
 
     def get_comment_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')

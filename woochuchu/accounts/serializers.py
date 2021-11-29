@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ['address_name', 'address_coord']
         read_only_fields = ['created_at', 'updated_at']
 
 

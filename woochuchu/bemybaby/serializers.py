@@ -1,7 +1,6 @@
-
-#파일 이름 serializers 로 바꾸기
 from rest_framework import serializers
 from .models import BeMyBaby, BeMyBabyComment
+from accounts.serializers import AddressSerializer
 
 class BeMyBabyCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +9,7 @@ class BeMyBabyCommentSerializer(serializers.ModelSerializer):
 
 class BeMyBabySerializer(serializers.ModelSerializer):
     comments = BeMyBabyCommentSerializer(many=True, read_only=True)
+    address = AddressSerializer(read_only=True)
     class Meta:
         model = BeMyBaby
         fields = '__all__'
