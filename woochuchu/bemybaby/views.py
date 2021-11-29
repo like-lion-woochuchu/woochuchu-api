@@ -33,14 +33,21 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     pagination_class = BasicPagination
 
     def get_feed_objects(self):
-        return BeMyBaby.objects.all().prefetch_related("comments").order_by('-id')
+        return BeMyBaby.objects.all().select_related('address').prefetch_related("comments").order_by('-id')
+
+    def get_filtered_feed_objects(self, animals):
+        return BeMyBaby.objects.filter(animal__in=animals).select_related("address").prefetch_related("comments").order_by('-id')
 
     def get_comment_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
 
     def get(self, request):
         try :
+            params = dict(request.query_params)
             feeds = self.get_feed_objects()
+            if 'animals_id' in params.keys():
+                animals = list(map(int, params['animals_id'][0].split(',')))
+                feeds = self.get_filtered_feed_objects(animals)
             page = self.paginate_queryset(feeds)
             if page is not None:
                 serializer = self.get_paginated_response(BeMyBabySerializer(page, many=True).data)
@@ -76,7 +83,7 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
                 address_id = create_address_data(address_res)
                 request.data['address'] = address_id
 
-            serializer = BeMyBabySerializer(data=request.data)
+            serializer = BeMyBabyCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -129,7 +136,7 @@ class BeMyBabyDeletePutView(APIView):
 
             else:
                 request.data['user'] = request.user_id
-                serializer = BeMyBabySerializer(feed, data=request.data)
+                serializer = BeMyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {
