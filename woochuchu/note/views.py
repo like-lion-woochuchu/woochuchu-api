@@ -111,19 +111,29 @@ class NoteDetailAPIView(APIView):
         JwtPermission
     ]
 
-    def get_note_objects(self, subject_id_1, subject_id_2):
-        objects = Note.objects.filter(
-            Q(Q(sender=subject_id_1) & Q(receiver=subject_id_2)) |
-            Q(Q(sender=subject_id_2) & Q(receiver=subject_id_1))
-        ).select_related("receiver", "sender").order_by(
-            "id"
-        )
+    def get_note_objects(self, subject_id_1, subject_id_2, user_uuid):
+        try:
+            user = User.objects.get(
+                id=subject_id_1,
+                uuid=user_uuid 
+            )
+        
+        except User.DoesNotExist:
+            raise PermissionError
+        
+        else:
+            objects = Note.objects.filter(
+                Q(Q(sender=subject_id_1) & Q(receiver=subject_id_2)) |
+                Q(Q(sender=subject_id_2) & Q(receiver=subject_id_1))
+            ).select_related("receiver", "sender").order_by(
+                "id"
+            )
 
-        return objects
+            return objects
     
     def get(self, request, receiver_id):
         try:
-            notes = self.get_note_objects(request.user_id, receiver_id)
+            notes = self.get_note_objects(request.user_id, receiver_id, request.user_uuid)
             notes.filter(seen_flag=0).update(seen_flag=1)
             serializer = NoteSerializer(notes, many=True)
             
@@ -135,6 +145,15 @@ class NoteDetailAPIView(APIView):
             
             return Response(data=data, status=status.HTTP_200_OK)
 
+        except PermissionError:
+            data = {
+                "results": {
+                    "msg": "권한이 없습니다.",
+                }
+            }
+
+            return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+    
         except Exception as e:
             print(e)
 
