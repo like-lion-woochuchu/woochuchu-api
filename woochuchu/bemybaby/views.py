@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, pagination
 from rest_framework.views import APIView
+
+from woochuchu.s3_utils import upload_image
 from .serializers import *
 from .models import *
 from drf_yasg.utils import swagger_auto_schema
@@ -10,6 +12,7 @@ from accounts.permissions import *
 from woochuchu.pagination import PaginationHandlerMixin
 from collections import OrderedDict
 from accounts.utils import *
+from decouple import config
 
 # 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
 class BasicPagination(pagination.PageNumberPagination):
@@ -70,6 +73,9 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
 
     def post(self, request):
         try:
+            files = request.FILES['files']
+            img_url = upload_image(files)
+            request.data['img_url'] = img_url
             request.data['user'] = request.user_id
             request.data['adopt_flag'] = 0
             address_name = request.data["address_name"]
