@@ -9,7 +9,7 @@ from accounts.permissions import *
 from woochuchu.pagination import PaginationHandlerMixin
 from collections import OrderedDict
 from accounts.utils import *
-from woochuchu.s3_utils import upload_image
+
 class BasicPagination(pagination.PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
@@ -69,9 +69,6 @@ class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
 
     def post(self, request):
         try:
-            files = request.FILES['files']
-            img_url = upload_image(files)
-            request.data['img_url'] = img_url
             request.data['user'] = request.user_id
             request.data['find_flag'] = 0
             address_name = request.data["address_name"]

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'note',
     'rest_framework',
     'drf_yasg',
+    's3_storage',
 ]
 
 MIDDLEWARE = [
@@ -142,8 +143,8 @@ STATIC_ROOT = Path(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
-# GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
 
 REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M",

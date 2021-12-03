@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, pagination
 from rest_framework.views import APIView
-
-from woochuchu.s3_utils import upload_image
 from .serializers import *
 from .models import *
 from drf_yasg.utils import swagger_auto_schema
@@ -73,9 +71,6 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
 
     def post(self, request):
         try:
-            files = request.FILES['files']
-            img_url = upload_image(files)
-            request.data['img_url'] = img_url
             request.data['user'] = request.user_id
             request.data['adopt_flag'] = 0
             address_name = request.data["address_name"]
@@ -158,7 +153,7 @@ class BeMyBabyDeletePutView(APIView):
                             "msg": serializer.errors,
                             "code": "E4000"
                         }
-                    }
+                   }
                     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         except BeMyBaby.DoesNotExist:

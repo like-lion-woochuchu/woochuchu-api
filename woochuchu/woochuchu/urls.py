@@ -40,6 +40,7 @@ urlpatterns = [
     path('findmybaby/', include('findmybaby.urls')),
     path('mybaby/', include('mybaby.urls')),
     path('note/', include('note.urls')),
+    path('image/', include('s3_storage.urls')),
     #  swagger
     url(r'^swagger(?P<format>\.json|\.yaml)$',
         schema_view.without_ui(cache_timeout=0), name='schema-json'),
