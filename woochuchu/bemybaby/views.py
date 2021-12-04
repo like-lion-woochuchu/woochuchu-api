@@ -134,6 +134,17 @@ class BeMyBabyDeletePutView(APIView):
 
             else:
                 request.data['user'] = request.user_id
+                address_name = request.data["address_name"]
+                address_res = get_address(address_name)
+                address_exists_id = check_address_exists(address_res)
+
+                if address_exists_id:
+                    request.data['address'] = address_exists_id
+                
+                else:
+                    address_id = create_address_data(address_res)
+                    request.data['address'] = address_id
+
                 serializer = BeMyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -223,7 +234,7 @@ class BeMyBabyCommentAPIView(APIView):
         try:
             request.data['bemybaby'] = feed_id
             request.data['user'] = request.user_id
-            serializer = BeMyBabyCommentSerializer(data=request.data)
+            serializer = BeMyBabyCommentCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.bemybaby_id = feed_id
                 serializer.save()
@@ -276,7 +287,7 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
             
             else:
                 request.data['user'] = request.user_id
-                serializer = BeMyBabyCommentSerializer(comment, data=request.data)
+                serializer = BeMyBabyCommentCreateSerializer(comment, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {

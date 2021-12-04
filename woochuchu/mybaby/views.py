@@ -86,7 +86,7 @@ class MyBabyAPIView(APIView, PaginationHandlerMixin):
     def post(self, request):
         try:
             request.data['user'] = request.user_id
-            serializer = MyBabySerializer(data=request.data)
+            serializer = MyBabyCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 data = {
@@ -136,7 +136,7 @@ class MyBabyDeletePutView(APIView):
 
             else:
                 request.data['user'] = request.user_id
-                serializer = MyBabySerializer(feed, data=request.data)
+                serializer = MyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {
@@ -231,7 +231,7 @@ class MyBabyCommentAPIView(APIView):
         try:
             request.data['mybaby'] = feed_id
             request.data['user'] = request.user_id
-            serializer = MyBabyCommentSerializer(data=request.data)
+            serializer = MyBabyCommentCreateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.mybaby_id = feed_id
                 serializer.save()
@@ -284,7 +284,7 @@ class MyBabyCommentDeletePutAPIView(APIView):
 
             else:
                 request.data['user'] = request.user_id
-                serializer = MyBabyCommentSerializer(comment, data=request.data)
+                serializer = MyBabyCommentCreateSerializer(comment, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     data = {
