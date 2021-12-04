@@ -72,6 +72,7 @@ class AuthViewSet(viewsets.GenericViewSet):
     def signup(self, request):
         try:
             with transaction.atomic():
+                request.data['user']['profile_img'] = config("DEFAULT_PROFILE_IMG")
                 user_data = request.data['user']
                 user_uuid = str(uuid.uuid4()).replace("-", "")
                 user_data['uuid'] = user_uuid
