@@ -121,9 +121,6 @@ class BeMyBabyDeletePutView(APIView):
         return BeMyBaby.objects.get(id=feed_id)
 
     def put(self, request, feed_id):
-        """
-        피드를 수정합니다.
-        """
         try :
             feed = self.get_object(feed_id=feed_id)
             if request.user_id != feed.user_id:
@@ -223,9 +220,6 @@ class BeMyBabyCommentAPIView(APIView):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
 
     def post(self, request, feed_id):
-        """
-        특정 피드에 댓글을 작성합니다.
-        """
         try:
             request.data['bemybaby'] = feed_id
             request.data['user'] = request.user_id
@@ -268,9 +262,6 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
         return BeMyBabyComment.objects.get(id=comment_id)
 
     def put(self, request, comment_id):
-        """
-        댓글을 수정합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['bemybaby'] = comment.bemybaby_id

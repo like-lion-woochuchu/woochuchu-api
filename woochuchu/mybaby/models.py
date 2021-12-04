@@ -6,7 +6,7 @@ class MyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
     body = models.TextField()
-    img_url = models.URLField()
+    img_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

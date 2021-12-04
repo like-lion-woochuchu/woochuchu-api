@@ -36,11 +36,12 @@ class ImageUploadDeleteAPIView(APIView):
             }
 
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     def delete(self, request):
         try:
-            img_url = request.data['img_url']
-            delete_image(img_url)
+            img_urls = request.data['img_url'].split("|")
+            for img_url in img_urls:
+                delete_image(img_url)
 
             data = {
                 "results": {
@@ -48,7 +49,7 @@ class ImageUploadDeleteAPIView(APIView):
                 }
             }
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
         
         except Exception as e:
             print(e)
