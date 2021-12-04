@@ -84,9 +84,6 @@ class MyBabyAPIView(APIView, PaginationHandlerMixin):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """
-        새 피드를 작성합니다.
-        """
         try:
             request.data['user'] = request.user_id
             serializer = MyBabySerializer(data=request.data)
@@ -231,9 +228,6 @@ class MyBabyCommentAPIView(APIView):
         return MyBabyComment.objects.filter(mybaby_id=feed_id).order_by('id')
 
     def post(self, request, feed_id):
-        """
-        특정 피드에 댓글을 작성합니다.
-        """
         try:
             request.data['mybaby'] = feed_id
             request.data['user'] = request.user_id
@@ -276,9 +270,6 @@ class MyBabyCommentDeletePutAPIView(APIView):
         return MyBabyComment.objects.get(id=comment_id)
 
     def put(self, request, comment_id):
-        """
-        댓글을 수정합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['mybaby'] = comment.mybaby_id
@@ -332,9 +323,6 @@ class MyBabyCommentDeletePutAPIView(APIView):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, comment_id):
-        """
-        댓글을 삭제합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             if request.user_id != comment.user_id:

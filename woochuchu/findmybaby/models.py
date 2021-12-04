@@ -14,7 +14,7 @@ class FindMyBaby(models.Model):
     last_seen = models.DateTimeField()
     title = models.CharField(max_length=45)
     body = models.TextField()
-    img_url = models.URLField()
+    img_url = models.TextField()
     phone = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

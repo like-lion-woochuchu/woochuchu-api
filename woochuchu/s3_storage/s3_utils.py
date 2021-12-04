@@ -26,3 +26,16 @@ def upload_image(file):
     
     except Exception as e:
         raise e
+
+def delete_image(img_url):
+    try:
+        img_key = img_url.split(config('S3_OBJECT_BASE_URL'))[1]
+        s3_client.delete_object(
+            Bucket=config("BUCKET_NAME"),
+            Key=img_key
+        )
+
+        return True
+    
+    except Exception as e:
+        raise e

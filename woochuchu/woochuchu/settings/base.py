@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'note',
     'rest_framework',
     'drf_yasg',
+    's3_storage',
 ]
 
 MIDDLEWARE = [

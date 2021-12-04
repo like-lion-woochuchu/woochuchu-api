@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, pagination
 from rest_framework.views import APIView
-
-from woochuchu.s3_utils import upload_image
 from .serializers import *
 from .models import *
 from drf_yasg.utils import swagger_auto_schema
@@ -73,9 +71,6 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
 
     def post(self, request):
         try:
-            files = request.FILES['files']
-            img_url = upload_image(files)
-            request.data['img_url'] = img_url
             request.data['user'] = request.user_id
             request.data['adopt_flag'] = 0
             address_name = request.data["address_name"]
@@ -126,9 +121,6 @@ class BeMyBabyDeletePutView(APIView):
         return BeMyBaby.objects.get(id=feed_id)
 
     def put(self, request, feed_id):
-        """
-        피드를 수정합니다.
-        """
         try :
             feed = self.get_object(feed_id=feed_id)
             if request.user_id != feed.user_id:
@@ -158,7 +150,7 @@ class BeMyBabyDeletePutView(APIView):
                             "msg": serializer.errors,
                             "code": "E4000"
                         }
-                    }
+                   }
                     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         except BeMyBaby.DoesNotExist:
@@ -228,9 +220,6 @@ class BeMyBabyCommentAPIView(APIView):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
 
     def post(self, request, feed_id):
-        """
-        특정 피드에 댓글을 작성합니다.
-        """
         try:
             request.data['bemybaby'] = feed_id
             request.data['user'] = request.user_id
@@ -273,9 +262,6 @@ class BeMyBabyCommentDeletePutAPIView(APIView):
         return BeMyBabyComment.objects.get(id=comment_id)
 
     def put(self, request, comment_id):
-        """
-        댓글을 수정합니다.
-        """
         try:
             comment = self.get_object(comment_id=comment_id)
             request.data['bemybaby'] = comment.bemybaby_id

@@ -11,7 +11,7 @@ class BeMyBaby(models.Model):
     sex = models.IntegerField()
     age = models.IntegerField(null=True)
     description = models.CharField(max_length=200)
-    img_url = models.URLField()
+    img_url = models.TextField()
     phone = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
