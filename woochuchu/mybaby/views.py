@@ -34,10 +34,10 @@ class MyBabyAPIView(APIView, PaginationHandlerMixin):
     pagination_class = BasicPagination
 
     def get_feed_objects(self):
-        return MyBaby.objects.all().prefetch_related("comments", "likes").order_by('-id')
+        return MyBaby.objects.all().select_related("user").prefetch_related("comments", "likes").order_by('-id')
 
     def get_filtered_feed_objects(self, animals):
-        return MyBaby.objects.filter(animal__in=animals).prefetch_related("comments").order_by('-id')
+        return MyBaby.objects.filter(animal__in=animals).select_related("user").prefetch_related("comments").order_by('-id')
 
     def get_comment_objects(self, feed_id):
         return MyBabyComment.objects.filter(mybaby_id=feed_id).order_by('id')

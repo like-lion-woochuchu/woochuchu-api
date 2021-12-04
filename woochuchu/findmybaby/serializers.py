@@ -1,9 +1,10 @@
 from django.db.models import fields
 from rest_framework import serializers
-from accounts.serializers import AddressSerializer
+from accounts.serializers import AddressSerializer, UserSerializer
 from .models import *
 
 class FindMyBabyCommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = FindMyBabyComment
         fields = '__all__'
@@ -12,6 +13,7 @@ class FindMyBabyCommentSerializer(serializers.ModelSerializer):
 class FindMyBabySerializer(serializers.ModelSerializer):
     comments = FindMyBabyCommentSerializer(many=True, read_only=True)
     address = AddressSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = FindMyBaby
         fields = '__all__'
