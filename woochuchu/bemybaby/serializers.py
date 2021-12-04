@@ -8,6 +8,11 @@ class BeMyBabyCommentSerializer(serializers.ModelSerializer):
         model = BeMyBabyComment
         fields = '__all__'
 
+class BeMyBabyCommentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BeMyBabyComment
+        fields = '__all__'
+
 class BeMyBabySerializer(serializers.ModelSerializer):
     comments = BeMyBabyCommentSerializer(many=True, read_only=True)
     address = AddressSerializer(read_only=True)

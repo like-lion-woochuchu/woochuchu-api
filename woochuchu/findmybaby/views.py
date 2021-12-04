@@ -121,7 +121,7 @@ class FindMyBabyDeatilAPIView(APIView):
     ]
 
     def get_object(self, feed_id):
-        feed = FindMyBaby.objects.get(id=feed_id)
+        feed = FindMyBaby.objects.select_related("address", "user").prefetch_related("comments").get(id=feed_id)
         
         return feed
     
@@ -171,6 +171,17 @@ class FindMyBabyDeatilAPIView(APIView):
 
             else:
                 request.data['user'] = request.user_id
+                address_name = request.data["address_name"]
+                address_res = get_address(address_name)
+                address_exists_id = check_address_exists(address_res)
+
+                if address_exists_id:
+                    request.data['address'] = address_exists_id
+                
+                else:
+                    address_id = create_address_data(address_res)
+                    request.data['address'] = address_id
+
                 serializer = FindMyBabyCreateSerializer(feed, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
@@ -295,7 +306,7 @@ class FindMyBabyCommentAPIView(APIView):
         try:
             request.data['findmybaby'] = feed_id
             request.data['user'] = request.user_id
-            serializer = FindMyBabyCommentSerializer(data=request.data)
+            serializer = FindMyBabyCommentCreateSerializer(data=request.data)
             
             if serializer.is_valid():
                 serializer.findmybaby_id = feed_id
@@ -355,7 +366,7 @@ class FindMyBabyCommentDeletePutAPIView(APIView):
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 request.data['user'] = request.user_id
-                serializer = FindMyBabyCommentSerializer(
+                serializer = FindMyBabyCommentCreateSerializer(
                     comment, data=request.data)
 
                 if serializer.is_valid():

@@ -59,7 +59,7 @@ def create_address_data(address_res):
                 'address_coord': address_coord
             }
 
-            address_serializer = AddressSerializer(data=address_data)
+            address_serializer = AddressCreateSerializer(data=address_data)
 
             if address_serializer.is_valid():
                 address_serializer.save()
