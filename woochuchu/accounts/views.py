@@ -11,7 +11,7 @@ from django.db import transaction
 
 class AuthViewSet(viewsets.GenericViewSet):
     serializer_class = [
-        UserSerializer, AnimalSerializer, AddressSerializer, AddressRegionSerializer, AddressRoadSerializer
+        UserCreateSerializer, UserSerializer, AnimalSerializer, AddressSerializer, AddressRegionSerializer, AddressRoadSerializer
         ]
 
     @action(methods=['POST'], detail=False)
@@ -88,7 +88,7 @@ class AuthViewSet(viewsets.GenericViewSet):
                 
                 # request.data['animals'] : Array of animal ids
                 user_data['animals'] = request.data['animals']
-                user_serializer = UserSerializer(data=user_data)
+                user_serializer = UserCreateSerializer(data=user_data)
 
                 if user_serializer.is_valid():
                     user_serializer.save()
