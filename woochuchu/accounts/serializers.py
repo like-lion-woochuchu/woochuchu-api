@@ -17,6 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'nickname', 'profile_img']
         read_only_fields = ['id', 'created_at', 'updated_at']
     
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class AddressSerializer(serializers.ModelSerializer):
     address_coord_x = serializers.SerializerMethodField()
