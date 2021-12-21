@@ -115,7 +115,7 @@ class FindMyBabyAPIView(APIView, PaginationHandlerMixin):
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class FindMyBabyDeatilAPIView(APIView):
+class FindMyBabyDetailAPIView(APIView):
     permission_classes = [
         JwtPermission
     ]

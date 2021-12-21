@@ -229,6 +229,31 @@ class BeMyBabyCommentAPIView(APIView):
 
     def get_objects(self, feed_id):
         return BeMyBabyComment.objects.filter(bemybaby_id=feed_id).order_by('id')
+    
+    def get(self, request, feed_id):
+        try:
+            comments = self.get_objects(feed_id=feed_id)
+            serializer = BeMyBabyCommentSerializer(comments, many=True)
+            
+            data = {
+                "results": {
+                    "data": serializer.data
+                }
+            }
+
+            return Response(data=data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            # unexpected error
+            print(e)
+            data = {
+                "results": {
+                    "msg": "정상적인 접근이 아닙니다.",
+                    "code": "E5000"
+                }
+            }
+
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, feed_id):
         try:
