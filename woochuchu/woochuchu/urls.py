@@ -15,23 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import url
 from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Woochuchu API",
-        default_version='v1',
-        description="우쭈쭈 API 명세서",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="meanaccto@naver.com"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
-)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,9 +25,4 @@ urlpatterns = [
     path('mybaby/', include('mybaby.urls')),
     path('note/', include('note.urls')),
     path('image/', include('s3_storage.urls')),
-    #  swagger
-    url(r'^swagger(?P<format>\.json|\.yaml)$',
-        schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view.with_ui('swagger',
-        cache_timeout=0), name='schema-swagger-ui'),
 ]
