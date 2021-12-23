@@ -7,6 +7,7 @@ from .models import *
 from django.db.models import Q
 from accounts.permissions import JwtPermission
 from rest_framework import status
+
 # Create your views here.
 
 class NoteGetPostAPIView(APIView):
@@ -25,14 +26,23 @@ class NoteGetPostAPIView(APIView):
             raise PermissionError
         
         else:
-            objects = Note.objects.filter(
-                Q(sender=user_id) |
-                Q(receiver=user_id)
-                ).select_related("receiver", "sender").values(
-                    "id", "receiver_id","body", "seen_flag", "created_at"
-                ).order_by(
-                "-id"
+            objects = Note.objects.raw(
+                """
+                SELECT 
+                *
+                FROM note
+                WHERE (id, sender_id + receiver_id) IN (
+                    SELECT
+                    MAX(id),
+                    sender_id + receiver_id AS sum_id
+                    FROM note
+                    WHERE sender_id = %s OR receiver_id = %s
+                    GROUP BY sum_id
+                    ORDER BY `id` DESC
                 )
+                ORDER BY id DESC;             
+                """, [user_id, user_id]
+            )
 
         return objects
 
