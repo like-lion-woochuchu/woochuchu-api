@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import User
 
-# # Create your models here.
+
 class Note(models.Model):
     sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)

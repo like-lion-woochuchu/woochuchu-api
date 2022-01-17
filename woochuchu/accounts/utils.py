@@ -2,9 +2,9 @@ import json
 from django.db import transaction
 import requests
 from decouple import config
-from .models import *
 from django.contrib.gis.geos import Point
 from .serializers import *
+
 
 def get_address(query, analyze_type=None, page=None, size=None):
     # analyze_code = default : similar (일부만 매칭된 값도 반환), possible : exact (정확히 입력한 값에 대하여만 반환)
@@ -12,38 +12,40 @@ def get_address(query, analyze_type=None, page=None, size=None):
     # size = 1 ~ 30 (한 페이지에서 보여질 문서의 갯수)
 
     url = "https://dapi.kakao.com/v2/local/search/address.json"
-    API_KEY = config("KAKAO_API")
-    headers = {'Authorization': f'KakaoAK {API_KEY}'}
+    api_key = config("KAKAO_API")
+    headers = {'Authorization': f'KakaoAK {api_key}'}
     params = {"query": query}
 
-    if analyze_type != None:
+    if analyze_type is not None:
         params["analyze_type"] = analyze_type
 
-    if page != None:
+    if page is not None:
         params['page'] = page
 
-    if size != None:
+    if size is not None:
         params['size'] = size
 
     res = requests.get(url, headers=headers, params=params)
     document = json.loads(res.text)
     return document['documents'][0]
 
+
 # 현재 입력된 주소가 데이터베이스에 존재하는지 확인
 def check_address_exists(address_res):
     try:
         if address_res['address_type'] == "ROAD_ADDR":
             address_obj = AddressRoad.objects.get(
-            address_name=address_res['address_name'])
+                address_name=address_res['address_name'])
 
         elif address_res['address_type'] == "REGION_ADDR":
             address_obj = AddressRegion.objects.get(
-            address_name=address_res['address_name'])
+                address_name=address_res['address_name'])
         
         return address_obj.address_id
     
     except AddressRoad.DoesNotExist or AddressRegion.DoesNotExist:
         return False
+
 
 # 새로운 주소 데이터 생성
 def create_address_data(address_res):

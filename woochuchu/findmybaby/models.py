@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import User, Animal, Address
-# Create your models here.
+
 
 class FindMyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 
+
 class User(models.Model):
     email = models.EmailField(unique=True)
     nickname = models.CharField(max_length=20, unique=True)
@@ -16,6 +17,7 @@ class User(models.Model):
         managed = False
         db_table = 'user'
 
+
 class Animal(models.Model):
     name = models.CharField(max_length=15)
 
@@ -23,9 +25,11 @@ class Animal(models.Model):
         managed = False
         db_table = 'animal'
 
+
 class UserAnimals(models.Model):
     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
     animal_id = models.ForeignKey("Animal", on_delete=models.CASCADE)
+
     class Meta:
         managed = False
         db_table = 'user_animals'

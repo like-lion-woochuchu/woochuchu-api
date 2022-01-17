@@ -1,10 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 from .token import decode_token
-from .models import User
-from rest_framework.response import Response
-from rest_framework import status
 
-# 에러 핸들링 - 실패하는 경우 -> 유저가 존재하지 않을 때 / 토큰이 유효하지 않을 때 (토큰 값이 유효하지 않거나  / 토큰이 만료 됐거나) (401)  / Unexpected Error(500)
+
 def get_jwt(request):
     try:
         jwt = request.headers['Authorization']
@@ -23,7 +20,7 @@ def get_jwt(request):
         print(e)
         raise Exception("Invalid authorization")
 
-# 하나로 합쳐서 request에 담아주기만 하면 됨
+
 class JwtPermission(BasePermission):
     def has_permission(self, request, view):
         try:

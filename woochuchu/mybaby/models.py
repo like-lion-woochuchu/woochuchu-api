@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import User, Animal, Address
 
-# Create your models here.
+
 class MyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     animal = models.ForeignKey(Animal, on_delete=models.DO_NOTHING)
@@ -14,6 +14,7 @@ class MyBaby(models.Model):
         managed = False
         db_table = 'mybaby'
 
+
 class MyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mybaby = models.ForeignKey('MyBaby', related_name='comments', on_delete=models.CASCADE)
@@ -24,6 +25,7 @@ class MyBabyComment(models.Model):
     class Meta:
         managed = False
         db_table = 'mybaby_comment'
+
 
 class MyBabyLike(models.Model):
     mybaby = models.ForeignKey('MyBaby', related_name='likes', on_delete=models.CASCADE)

@@ -1,18 +1,14 @@
-from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, pagination
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from accounts.permissions import *
 from woochuchu.pagination import PaginationHandlerMixin
 from collections import OrderedDict
 from accounts.utils import *
-from decouple import config
 
-# 피드도 S3 때문에 커스터마이징 위해서 APIView 이용해서 하는 걸로 수정
+
 class BasicPagination(pagination.PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
@@ -26,6 +22,7 @@ class BasicPagination(pagination.PageNumberPagination):
             ('previous', self.get_previous_link()),
             ('data', data)
         ]))
+
 
 class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
     permission_classes = [
@@ -76,10 +73,10 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
             address_name = request.data["address_name"]
             address_res = get_address(address_name)
             address_exists_id = check_address_exists(address_res)
-            
+
             if address_exists_id:
                 request.data['address'] = address_exists_id
-                
+
             else:
                 address_id = create_address_data(address_res)
                 request.data['address'] = address_id
@@ -92,7 +89,7 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
                         "msg": "데이터가 성공적으로 저장되었습니다."
                     }
                 }
-                return Response(data=data, status=status.HTTP_200_OK) 
+                return Response(data=data, status=status.HTTP_200_OK)
 
             else:
                 data = {
@@ -113,15 +110,17 @@ class BeMyBabyAPIView(APIView, PaginationHandlerMixin):
             }
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class BeMyBabyDeletePutView(APIView):
     permission_classes = [
         JwtPermission
     ]
+
     def get_object(self, feed_id):
         return BeMyBaby.objects.get(id=feed_id)
 
     def put(self, request, feed_id):
-        try :
+        try:
             feed = self.get_object(feed_id=feed_id)
             if request.user_id != feed.user_id:
                 data = {
@@ -222,6 +221,7 @@ class BeMyBabyDeletePutView(APIView):
             }
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class BeMyBabyCommentAPIView(APIView):
     permission_classes = [
         JwtPermission
@@ -288,6 +288,7 @@ class BeMyBabyCommentAPIView(APIView):
                 }
             }
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class BeMyBabyCommentDeletePutAPIView(APIView):
     permission_classes = [

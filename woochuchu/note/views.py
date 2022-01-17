@@ -1,5 +1,3 @@
-from django.core.checks import messages
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import NoteSerializer, NoteCreateSerializer
@@ -115,6 +113,7 @@ class NoteGetPostAPIView(APIView):
             }
 
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class NoteDetailAPIView(APIView):
     permission_classes = [

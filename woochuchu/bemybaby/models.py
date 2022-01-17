@@ -1,7 +1,7 @@
 from django.db import models
-from django.db.models.fields import BigIntegerField, CharField, DateTimeField, TextField, URLField
 from accounts.models import User, Animal, Address
-# Create your models here.
+
+
 class BeMyBaby(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.DO_NOTHING)
@@ -20,6 +20,7 @@ class BeMyBaby(models.Model):
     class Meta:
         managed = False
         db_table = 'bemybaby'
+
 
 class BeMyBabyComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

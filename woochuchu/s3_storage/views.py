@@ -1,12 +1,10 @@
-from os import stat
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from accounts.permissions import JwtPermission
 from .s3_utils import upload_image, delete_image
 from rest_framework.response import Response
 
-# Create your views here.
+
 class ImageUploadDeleteAPIView(APIView):
     permission_classes = [
         JwtPermission

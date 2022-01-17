@@ -9,6 +9,7 @@ import uuid
 from .utils import check_address_exists, create_address_data, get_address
 from django.db import transaction
 
+
 class AuthViewSet(viewsets.GenericViewSet):
     serializer_class = [
         UserCreateSerializer, UserSerializer, AnimalSerializer, AddressSerializer, AddressRegionSerializer, AddressRoadSerializer
@@ -28,13 +29,13 @@ class AuthViewSet(viewsets.GenericViewSet):
             payload_value = str(user.uuid) + ":" + str(user.id)
             nickname = user.nickname
             profile_img = user.profile_img
-            
+
             payload = {
                 "subject": payload_value,
                 "nickname": nickname,
                 "profile_img": profile_img
             }
-            
+
             access_token = generate_token(payload, "access")
 
             data = {
@@ -81,11 +82,11 @@ class AuthViewSet(viewsets.GenericViewSet):
                 address_exists_id = check_address_exists(address_res)
                 if address_exists_id:
                     user_data['address'] = address_exists_id
-                
+
                 else:
                     address_id = create_address_data(address_res)
                     user_data['address'] = address_id
-                
+
                 # request.data['animals'] : Array of animal ids
                 user_data['animals'] = request.data['animals']
                 user_serializer = UserCreateSerializer(data=user_data)
@@ -107,13 +108,12 @@ class AuthViewSet(viewsets.GenericViewSet):
                     }
 
                     return Response(data=data, status=status.HTTP_200_OK)
-                
+
                 else:
                     raise ValueError(user_serializer.errors)
-                
-                
+
         except ValueError as e:
-            
+
             data = {
                 "results": {
                     "msg": e.args,
@@ -132,7 +132,6 @@ class AuthViewSet(viewsets.GenericViewSet):
                 }
             }
             return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
     @action(methods=['POST'], detail=False)
     def token(self, request):
