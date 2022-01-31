@@ -15,7 +15,7 @@
 |<img src=https://user-images.githubusercontent.com/75655613/151792895-1f43c6dd-cb97-4cc1-bacf-5ad7b61834b1.gif>|<img src=https://user-images.githubusercontent.com/75655613/151793121-5b3f23ea-bcb7-464d-815e-0b8c3cb6cfde.gif>|
 |입양 대기 중인 동물 소개 페이지 (가족이 되어주세요) |다른 사용자에게 쪽지 보내기|
 |<img src=https://user-images.githubusercontent.com/75655613/151792785-c2bd7238-2fc4-4bec-9c72-c3227ddb9953.gif>|<img src=https://user-images.githubusercontent.com/75655613/151793148-bebe79e0-dbd4-4b81-b07b-13575a382019.gif>|
-|쪽지 보내기|
+|쪽지함|
 |<img src=https://user-images.githubusercontent.com/75655613/151793179-59d84f5e-ceaf-4ddc-88e3-a84576a90e62.gif>|
 
 <br><br>
