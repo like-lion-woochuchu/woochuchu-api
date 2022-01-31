@@ -4,7 +4,7 @@
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Flike-lion-woochuchu%2Fwoochuchu-api%2F&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 
-## Woochuchu
+## 🐶 Woochuchu
 <!--사용 gif -->
 |구글 회원가입|로그인|
 |:-:|:-:|
@@ -19,5 +19,10 @@
 |<img src=https://user-images.githubusercontent.com/75655613/151793179-59d84f5e-ceaf-4ddc-88e3-a84576a90e62.gif>|
 
 <br><br>
-## 백엔드 시스템 구성도
+## 🛠 백엔드 시스템 구성도
+![백엔드 구성도](https://user-images.githubusercontent.com/62459414/151798535-748da225-9b45-444a-aeac-1ebb69fe5501.jpg)
+
+<br><br>
+## 🗝 인증 로직
+<img width="927" alt="스크린샷 2022-01-31 오후 10 13 45" src="https://user-images.githubusercontent.com/62459414/151799778-97965c42-f5dd-4633-82da-b022771e127b.png">
 
