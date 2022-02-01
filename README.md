@@ -14,7 +14,7 @@
 </p>
 
 <br><br>
-## 주요기능
+## 👀 주요기능
 <!--사용 gif -->
 |구글 회원가입|로그인|
 |:-:|:-:|
@@ -36,3 +36,20 @@
 ## 🗝 인증 로직
 <img width="927" alt="스크린샷 2022-01-31 오후 10 13 45" src="https://user-images.githubusercontent.com/62459414/151799778-97965c42-f5dd-4633-82da-b022771e127b.png">
 
+## 💪 멤버
+|PM & Backend|Backend|
+|:-:|:-:|
+<img src="https://avatars.githubusercontent.com/u/62459414?v=4" width="200" height="200">|<img src="https://avatars.githubusercontent.com/u/75655613?v=4" width="200" height="200">
+[조성언](https://github.com/SeongEon-Jo) | [이연주](https://github.com/430lyj)
+
+
+|Frontend|Frontend|Frontend|
+|:-:|:-:|:-:|
+<img src="https://avatars.githubusercontent.com/u/78249180?v=4" width="200" height="200">|<img src="https://avatars.githubusercontent.com/u/67324487?v=4" width="200" height="200">|<img src="https://avatars.githubusercontent.com/u/61453718?v=4" width="200" height="200">
+[김하연](https://github.com/kingharong) | [민유지](https://github.com/nvrtmd) | [박상민](https://github.com/steadily-worked)
+
+
+|UI & Design|
+|:-:|
+<img src="https://avatars.githubusercontent.com/u/47231140?v=4" width="200" height="200"> |
+[고유진](https://github.com/imeugeneco)
