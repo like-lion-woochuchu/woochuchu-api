@@ -3,18 +3,18 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Flike-lion-woochuchu%2Fwoochuchu-api%2F&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
-## 서비스 소개
+## 🐶 서비스 소개
 <p align="center">
-<img src="https://user-images.githubusercontent.com/75655613/151902003-ae9f1d23-12fa-4aca-b4ea-453459db0afb.jpeg" height="500px">
-<img src="https://user-images.githubusercontent.com/75655613/151902630-2b194e8c-79bb-42c7-a8f7-534f2372de6b.jpeg" height="500px">
-<img src="https://user-images.githubusercontent.com/75655613/151902666-9a733708-7b68-46b0-acae-c32d9132dc4a.jpeg" height="500px">
-<img src="https://user-images.githubusercontent.com/75655613/151902677-ecf59c27-3824-4c62-80ab-11512fdbb22d.jpeg" height="500px">
-<img src="https://user-images.githubusercontent.com/75655613/151902695-c2e843d2-9cfd-4253-b9c9-0c19af4d0777.jpeg" height="500px">
-<img src="https://user-images.githubusercontent.com/75655613/151902704-c7a5a1ed-ac2f-42a0-bcce-fab1017d066e.jpeg" height="500px">
+<img src="https://user-images.githubusercontent.com/75655613/151902003-ae9f1d23-12fa-4aca-b4ea-453459db0afb.jpeg" height="700px">
+<img src="https://user-images.githubusercontent.com/75655613/151902630-2b194e8c-79bb-42c7-a8f7-534f2372de6b.jpeg" height="700px">
+<img src="https://user-images.githubusercontent.com/75655613/151902666-9a733708-7b68-46b0-acae-c32d9132dc4a.jpeg" height="700px">
+<img src="https://user-images.githubusercontent.com/75655613/151902677-ecf59c27-3824-4c62-80ab-11512fdbb22d.jpeg" height="700px">
+<img src="https://user-images.githubusercontent.com/75655613/151902695-c2e843d2-9cfd-4253-b9c9-0c19af4d0777.jpeg" height="700px">
+<img src="https://user-images.githubusercontent.com/75655613/151902704-c7a5a1ed-ac2f-42a0-bcce-fab1017d066e.jpeg" height="700px">
 </p>
 
 <br><br>
-## 🐶 Woochuchu
+## 주요기능
 <!--사용 gif -->
 |구글 회원가입|로그인|
 |:-:|:-:|
